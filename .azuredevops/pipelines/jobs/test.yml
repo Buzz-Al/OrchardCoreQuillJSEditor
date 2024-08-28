@@ -1,0 +1,43 @@
+jobs:
+- job: test
+  displayName : 'Test'
+  pool:
+    vmImage: windows-latest
+  steps:
+  # GitVersion requires deep clone
+  - checkout: self
+    fetchDepth: 0
+
+  - task: gitversion/setup@0
+    displayName: Install GitVersion
+    inputs:
+      versionSpec: 5.x
+
+  - task: gitversion/execute@0
+    displayName: Determine Version
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '**/*.csproj'
+      selectOrConfig: config
+      nugetConfigPath: 'NuGet.config'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '**/*.csproj'
+      arguments: --configuration $(BuildConfiguration) --no-restore
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack
+    inputs:
+      command: pack
+      searchPatternPack: src/**/*.csproj
+      configuration: $(BuildConfiguration)
+      versioningScheme: byEnvVar
+      versionEnvVar: GitVersion.NuGetVersionV2
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifact

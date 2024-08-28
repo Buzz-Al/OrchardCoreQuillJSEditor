@@ -1,0 +1,44 @@
+<Project>
+    <ItemGroup>
+        <PackageReference Update="OrchardCore.Logging.NLog" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Admin.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Application.Cms.Targets" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.AuditTrail.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Configuration.KeyVault" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Data.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Data.YesSql.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Data.YesSql" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Deployment.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.DisplayManagement" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.DisplayManagement.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Email.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Infrastructure" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Infrastructure.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Liquid.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Media.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.MiniProfiler" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Module.Targets" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.OpenId" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Users.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Users.Core" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Users" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Recipes.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.ResourceManagement" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Theme.Targets" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Workflows.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.ContentManagement" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.ContentTypes.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Email.Abstractions" Version="$(OrchardCoreVersion)" />
+        <PackageReference Update="OrchardCore.Search.Elasticsearch" Version="$(OrchardCoreVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Update="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Update="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Update="FluentExcel" Version="2.2.0" />
+    </ItemGroup>
+</Project>

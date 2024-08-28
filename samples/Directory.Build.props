@@ -1,0 +1,10 @@
+<Project>
+
+    <PropertyGroup>
+        <AspNetCoreTargetFramework>net8.0</AspNetCoreTargetFramework>
+
+    </PropertyGroup>
+
+    <Import Project="../Common.props"/>
+
+</Project>

@@ -1,0 +1,109 @@
+{
+  "name": "quill-editors",
+  "displayName": "Quill Editor Parts",
+  "description": "Creates a light, default and full editor content part to be used in blocks. ",
+  "author": "Buzz",
+  "website": "",
+  "version": "",
+  "issetuprecipe": false,
+  "categories": [ "Buzz" ],
+  "tags": [],
+  "steps": [
+    {
+      "name": "ContentDefinition",
+      "ContentTypes": [],
+      "ContentParts": [
+        {
+          "Name": "EditorDefault",
+          "Settings": {
+            "ContentPartSettings": {
+              "Attachable": true,
+              "Reusable": true
+            }
+          },
+          "ContentPartFieldDefinitionRecords": [
+            {
+              "FieldName": "HtmlField",
+              "Name": "Content",
+              "Settings": {
+                "ContentPartFieldSettings": {
+                  "DisplayName": "Content",
+                  "Editor": "Quill",
+                  "Position": "0"
+                },
+                "HtmlFieldSettings": {},
+                "HtmlFieldTrumbowygEditorSettings": {
+                  "Options": "{\r\n    autogrow: true,\r\n    btns: [\r\n        [\"viewHTML\"],\r\n        [\"undo\", \"redo\"],\r\n        [\"formatting\"],\r\n        [\"strong\", \"em\", \"del\"],\r\n        [\"foreColor\", \"backColor\"],\r\n        [\"superscript\", \"subscript\"],\r\n        [\"link\"],\r\n        [\"insertShortcode\"],\r\n        [\"image\"],\r\n        [\"align\"],\r\n        [\"unorderedList\", \"orderedList\"],\r\n        [\"horizontalRule\"],\r\n        [\"removeformat\"],\r\n        [\"fullscreen\"]\r\n    ],\r\n    btnsDef: {\r\n        align: {\r\n            dropdown: [\"justifyLeft\", \"justifyCenter\", \"justifyRight\", \"justifyFull\"],\r\n            ico: \"justifyLeft\"\r\n        },\r\n        image: {\r\n            dropdown: [\"insertImage\", \"base64\", \"noembed\"],\r\n            ico: \"insertImage\"\r\n        }\r\n    }\r\n}"
+                },
+                "LuceneContentIndexSettings": {},
+                "HtmlFieldQuillEditorSettings": {
+                  "Theme": 20,
+                  "ToolbarOptions": "[\r\n          ['bold', 'italic'],        // toggled buttons\r\n          ['blockquote'],\r\n\r\n          [{ 'header': 1 }, { 'header': 2 }],               // custom button values\r\n          [{ 'list': 'ordered'}, { 'list': 'bullet' }],\r\n\r\n          [{ 'color': ['#84BD00', '#fff'] }],          // dropdown with defaults from theme\r\n       \r\n\r\n          ['clean']                                         // remove formatting button\r\n        ]"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "EditorFull",
+          "Settings": {
+            "ContentPartSettings": {
+              "Attachable": true,
+              "Reusable": true
+            }
+          },
+          "ContentPartFieldDefinitionRecords": [
+            {
+              "FieldName": "HtmlField",
+              "Name": "Content",
+              "Settings": {
+                "ContentPartFieldSettings": {
+                  "DisplayName": "Content",
+                  "Editor": "Quill",
+                  "Position": "0"
+                },
+                "HtmlFieldSettings": {},
+                "HtmlFieldTrumbowygEditorSettings": {
+                  "Options": "{\r\n    autogrow: true,\r\n    btns: [\r\n        [\"viewHTML\"],\r\n        [\"undo\", \"redo\"],\r\n        [\"formatting\"],\r\n        [\"strong\", \"em\", \"del\"],\r\n        [\"foreColor\", \"backColor\"],\r\n        [\"superscript\", \"subscript\"],\r\n        [\"link\"],\r\n        [\"insertShortcode\"],\r\n        [\"image\"],\r\n        [\"align\"],\r\n        [\"unorderedList\", \"orderedList\"],\r\n        [\"horizontalRule\"],\r\n        [\"removeformat\"],\r\n        [\"fullscreen\"]\r\n    ],\r\n    btnsDef: {\r\n        align: {\r\n            dropdown: [\"justifyLeft\", \"justifyCenter\", \"justifyRight\", \"justifyFull\"],\r\n            ico: \"justifyLeft\"\r\n        },\r\n        image: {\r\n            dropdown: [\"insertImage\", \"base64\", \"noembed\"],\r\n            ico: \"insertImage\"\r\n        }\r\n    }\r\n}"
+                },
+                "LuceneContentIndexSettings": {},
+                "HtmlFieldQuillEditorSettings": {
+                  "Theme": 10,
+                  "ToolbarOptions": "[\r\n          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons\r\n          ['blockquote'],\r\n          ['link', 'image'],\r\n\r\n          [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],\r\n\r\n          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],\r\n\r\n          [{ 'color': ['#CAFB58','#84BD00','#6F9F00','#FDAD59','#FF8200','#AF5B04','#58D8EB','#00AEC7','#005561','#965AE0','#440099','#200047','#DEDEDE','#7E7E7E'] }],          // dropdown with defaults from theme\r\n          [{ 'align': [] }],\r\n\r\n          ['clean']                                         // remove formatting button\r\n        ]"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "Name": "EditorLight",
+          "Settings": {
+            "ContentPartSettings": {
+              "Attachable": true,
+              "Reusable": true
+            }
+          },
+          "ContentPartFieldDefinitionRecords": [
+            {
+              "FieldName": "HtmlField",
+              "Name": "Content",
+              "Settings": {
+                "ContentPartFieldSettings": {
+                  "DisplayName": "Content",
+                  "Editor": "Quill",
+                  "Position": "0"
+                },
+                "HtmlFieldSettings": {},
+                "LuceneContentIndexSettings": {},
+                "HtmlFieldQuillEditorSettings": {
+                  "Theme": 20,
+                  "ToolbarOptions": "[\r\n          [{ 'color': ['#84BD00', '#000'] }],          // dropdown with defaults from theme\r\n          ['clean']                                         // remove formatting button\r\n]"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

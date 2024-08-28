@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DE04345A-073E-4C60-BC7E-E4B5DDFEF636}"
+	ProjectSection(SolutionItems) = preProject
+		Common.props = Common.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+		README.md = README.md
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{0D7522B0-270F-48ED-BC88-2C180C41A8FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{10020013-7651-4A01-A480-BC432E03E814}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".azuredevops", ".azuredevops", "{7564963B-1923-4CCC-A3FC-70CB87F096F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pipelines", ".azuredevops\pipelines", "{39CABC8D-9483-4777-89FB-2E9D68169239}"
+	ProjectSection(SolutionItems) = preProject
+		.azuredevops\pipelines\pipeline.yml = .azuredevops\pipelines\pipeline.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", ".azuredevops\pipelines\jobs", "{1573EEBD-6915-4286-8DCF-C7585B7DDD69}"
+	ProjectSection(SolutionItems) = preProject
+		.azuredevops\pipelines\jobs\publish.yml = .azuredevops\pipelines\jobs\publish.yml
+		.azuredevops\pipelines\jobs\test.yml = .azuredevops\pipelines\jobs\test.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Buzz.OrchardCore.Quilljs.Sample.Web", "samples\Buzz.OrchardCore.Quilljs.Sample.Web\Buzz.OrchardCore.Quilljs.Sample.Web.csproj", "{251DC40F-A4AE-4386-9952-C442C2B2F43F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Buzz.OrchardCore.Quilljs", "src\Buzz.OrchardCore.Quilljs\Buzz.OrchardCore.Quilljs.csproj", "{14787337-3B1F-4573-AAC3-D37CE4319747}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{251DC40F-A4AE-4386-9952-C442C2B2F43F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{251DC40F-A4AE-4386-9952-C442C2B2F43F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{251DC40F-A4AE-4386-9952-C442C2B2F43F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{251DC40F-A4AE-4386-9952-C442C2B2F43F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14787337-3B1F-4573-AAC3-D37CE4319747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14787337-3B1F-4573-AAC3-D37CE4319747}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14787337-3B1F-4573-AAC3-D37CE4319747}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14787337-3B1F-4573-AAC3-D37CE4319747}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{39CABC8D-9483-4777-89FB-2E9D68169239} = {7564963B-1923-4CCC-A3FC-70CB87F096F4}
+		{1573EEBD-6915-4286-8DCF-C7585B7DDD69} = {39CABC8D-9483-4777-89FB-2E9D68169239}
+		{251DC40F-A4AE-4386-9952-C442C2B2F43F} = {0D7522B0-270F-48ED-BC88-2C180C41A8FD}
+		{14787337-3B1F-4573-AAC3-D37CE4319747} = {10020013-7651-4A01-A480-BC432E03E814}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0D24AD6-030F-443F-AFCF-7A96B510C40F}
+	EndGlobalSection
+EndGlobal

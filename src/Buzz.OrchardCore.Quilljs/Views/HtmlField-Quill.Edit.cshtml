@@ -1,0 +1,88 @@
+@model OrchardCore.ContentFields.ViewModels.EditHtmlFieldViewModel
+@using OrchardCore.ContentManagement.Metadata.Models
+@using OrchardCore.ContentFields.Settings
+@using OrchardCore.Mvc.Utilities
+@{
+  var settings = Model.PartFieldDefinition.GetSettings<HtmlFieldSettings>();
+  var quillSettings = Model.PartFieldDefinition.GetSettings<HtmlFieldQuillEditorSettings>();
+  var culture = await Orchard.GetContentCultureAsync(Model.Field.ContentItem);
+
+  string theme;
+  switch (quillSettings.Theme){
+    case QuillTheme.Bubble:
+      theme = "bubble";
+      break;
+    case QuillTheme.Snow:
+      theme = "snow";
+      break;
+    default:
+      theme = "snow";
+      break;
+  }
+}
+<div class="@Orchard.GetFieldWrapperClasses(Model.PartFieldDefinition)" id="@Html.IdFor(x => x.Html)_FieldWrapper">
+    <label asp-for="Html" class="@Orchard.GetLabelClasses()">@Model.PartFieldDefinition.DisplayName()</label>
+    <div class="@Orchard.GetEndClasses()">
+        @await DisplayAsync(await New.ShortcodeModal())
+        <div id="@Html.IdFor(m => m.Html)" class="form-control" style="border-radius: 0;">
+          @Html.Raw(Model.Html)
+        </div>
+        @if (!string.IsNullOrEmpty(settings.Hint))
+        {
+            <span class="hint">@settings.Hint</span>
+        }
+    </div>
+</div>
+
+<textarea id="@Html.IdFor(x => x.Html)_value" asp-for="Html" class="d-none">
+
+</textarea>
+
+<style asp-name="@($"quill-{theme}")"  at="Head"></style>
+
+<script asp-name="quill" at="Foot"></script>
+<script at="Foot">
+  $(function () {
+
+    const toolbarSettings = @Html.Raw(quillSettings.ToolbarOptions);
+    const quill = new Quill(
+      '#@Html.IdFor(m => m.Html)',
+      {
+        modules: {
+          toolbar: toolbarSettings,
+        },
+        theme: '@theme'
+      }
+    );
+
+    function imageHandler() {
+
+      $("#mediaApp").detach().appendTo('#mediaModalHtmlField .modal-body');
+      $("#mediaApp").show();
+      mediaApp.selectedMedias = [];
+      var modal = new bootstrap.Modal($("#mediaModalHtmlField"));
+      modal.show();
+
+      //disable an reset on click event over the button to avoid issue if press button multiple times or have multiple editor
+      $('#mediaHtmlFieldSelectButton').off('click');
+      $('#mediaHtmlFieldSelectButton').on('click', function (v) {
+          var range = quill.getSelection();
+          for (i = 0; i < mediaApp.selectedMedias.length; i++) {
+            quill.insertEmbed(range.index, 'image', mediaApp.selectedMedias[i].url, Quill.sources.USER);
+          }
+
+          modal.hide();
+          return true;
+      });
+    }
+
+    quill.getModule('toolbar').addHandler('image', imageHandler);
+
+    quill.on('image', imageHandler);
+
+    const textarea = document.getElementById('@Html.IdFor(x => x.Html)_value');
+    quill.on('text-change', (delta, oldDelta, source) => {
+      document.getElementById('@Html.IdFor(x => x.Html)_value').value = quill.root.innerHTML;
+    });
+  });
+</script>

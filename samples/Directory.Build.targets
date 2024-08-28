@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup>
+    <PackageReference Update="OrchardCore.Application.Cms.Targets" Version="$(OrchardCoreVersion)" />
+    <PackageReference Update="OrchardCore.Logging.NLog" Version="$(OrchardCoreVersion)" />
+  </ItemGroup>
+</Project>

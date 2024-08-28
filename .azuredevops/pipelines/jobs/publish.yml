@@ -1,0 +1,20 @@
+jobs:
+- job: publish
+  displayName: 'Publish'
+  pool:
+    vmImage: windows-latest
+  dependsOn: test
+  variables:
+    isTag: $[contains(variables['Build.SourceBranch'], 'refs/tags/')]
+  condition: eq(variables.isTag, true)
+  steps:
+  - checkout: none
+
+  - task: DownloadBuildArtifacts@1
+
+  - task: NuGetCommand@2
+    displayName: NuGet push
+    inputs:
+      command: push
+      searchPatternPush: $(Build.ArtifactStagingDirectory)/**/*.nupkg
+      feedPublish: 4184b28a-0714-49e7-8496-5131f7896477

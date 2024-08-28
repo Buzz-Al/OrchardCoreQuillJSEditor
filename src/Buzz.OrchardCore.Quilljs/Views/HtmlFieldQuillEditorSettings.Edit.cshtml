@@ -1,0 +1,60 @@
+@model Buzz.OrchardCore.Quilljs.ViewModels.QuillSettingsViewModel
+
+<div id="@Html.IdFor(m => m)" class="field-editor field-editor-quill">
+
+    <div class="mb-3 row">
+        <div class="col-large col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
+            <label asp-for="ToolbarOptions" class="form-label">@T["Enter the editor tool bar options"]</label>
+            <span class="hint"><a href="https://quilljs.com/docs/quickstart" target="_blank">@T["Documentation"]</a></span>
+            <textarea asp-for="ToolbarOptions" class="form-control" autofocus="autofocus"></textarea>
+        </div>
+    </div>
+
+    <label for="Theme">Choose a theme:</label>
+
+    <select asp-for="Theme" asp-items="Html.GetEnumSelectList<QuillTheme>()" class="form-select">
+    </select>
+</div>
+
+<style asp-name="codemirror"></style>
+<script asp-name="codemirror" at="Foot"></script>
+<script asp-name="codemirror-addon-display-autorefresh" at="Foot"></script>
+<script asp-name="codemirror-mode-javascript" at="Foot"></script>
+<script at="Foot">
+    $(function () {
+        var toolbarOptionsTextArea = document.getElementById('@Html.IdFor(x => x.ToolbarOptions)');
+        var editor = CodeMirror.fromTextArea(toolbarOptionsTextArea, {
+            autoRefresh: true,
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: { name: "javascript" }
+    });
+  @{
+    if (string.IsNullOrEmpty(Model.ToolbarOptions))
+    {
+      string fullToolbarOptions = @"[
+          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+          ['blockquote', 'code-block'],
+          ['link', 'image', 'video', 'formula'],
+
+          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+          [{ 'direction': 'rtl' }],                         // text direction
+
+          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+          [{ 'font': [] }],
+          [{ 'align': [] }],
+
+          ['clean']                                         // remove formatting button
+        ]";
+
+        <text>editor.setValue(`@Html.Raw(fullToolbarOptions)`);</text>
+    }
+}
+});
+</script>
