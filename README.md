@@ -1,2 +1,2 @@
 # Buzz.OrchardCore.Quilljs
-Adds cookie consent banner using https://cookieconsent.orestbida.com/
+Adds Quill editor as an option for HTML fields.
