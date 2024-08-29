@@ -24,7 +24,8 @@
     <label asp-for="Html" class="@Orchard.GetLabelClasses()">@Model.PartFieldDefinition.DisplayName()</label>
     <div class="@Orchard.GetEndClasses()">
         @await DisplayAsync(await New.ShortcodeModal())
-        <div id="@Html.IdFor(m => m.Html)_editor" class="form-control" style="border-radius: 0;">
+
+        <div id="@Html.IdFor(m => m.Html)_editor" class="form-control @Html.Raw((quillSettings.Theme == QuillTheme.Bubble) ? "bubble": "")" style="@Html.Raw((quillSettings.Theme == QuillTheme.Snow) ? "border-radius: 0;": "")">
           @Html.Raw(Model.Html)
         </div>
         @if (!string.IsNullOrEmpty(settings.Hint))
@@ -38,49 +39,64 @@
 
 <style asp-name="@($"quill-{theme}")"></style>
 
+@if(quillSettings.Theme == QuillTheme.Bubble)
+{
+    <style asp-name="quill-bubble-override">
+        .form-control.bubble .ql-editor{
+            padding: 0;
+        }
+    </style>
+}
+
 <script asp-name="quill" at="Foot"></script>
 <script at="Foot">
   $(function () {
 
     const toolbarSettings = @Html.Raw(quillSettings.ToolbarOptions);
-    const quill = new Quill(
-      '#@Html.IdFor(m => m.Html)_editor',
-      {
-        modules: {
-          toolbar: toolbarSettings,
-        },
-        theme: '@theme'
-      }
-    );
+    var quillEditor = document.getElementById('@Html.IdFor(x => x.Html)');
 
-    function imageHandler() {
+    if(quillEditor)
+    {
+        const quill = new Quill(
+        '#@Html.IdFor(m => m.Html)_editor',
+        {
+            modules: {
+            toolbar: toolbarSettings,
+            },
+            theme: '@theme'
+        }
+        );
 
-      $("#mediaApp").detach().appendTo('#mediaModalHtmlField .modal-body');
-      $("#mediaApp").show();
-      mediaApp.selectedMedias = [];
-      var modal = new bootstrap.Modal($("#mediaModalHtmlField"));
-      modal.show();
+        function imageHandler() {
 
-      //disable an reset on click event over the button to avoid issue if press button multiple times or have multiple editor
-      $('#mediaHtmlFieldSelectButton').off('click');
-      $('#mediaHtmlFieldSelectButton').on('click', function (v) {
-          var range = quill.getSelection();
-          for (i = 0; i < mediaApp.selectedMedias.length; i++) {
-            quill.insertEmbed(range.index, 'image', mediaApp.selectedMedias[i].url, Quill.sources.USER);
-          }
+        $("#mediaApp").detach().appendTo('#mediaModalHtmlField .modal-body');
+        $("#mediaApp").show();
+        mediaApp.selectedMedias = [];
+        var modal = new bootstrap.Modal($("#mediaModalHtmlField"));
+        modal.show();
 
-          modal.hide();
-          return true;
-      });
+        //disable an reset on click event over the button to avoid issue if press button multiple times or have multiple editor
+        $('#mediaHtmlFieldSelectButton').off('click');
+        $('#mediaHtmlFieldSelectButton').on('click', function (v) {
+            var range = quill.getSelection();
+            for (i = 0; i < mediaApp.selectedMedias.length; i++) {
+                quill.insertEmbed(range.index, 'image', mediaApp.selectedMedias[i].url, Quill.sources.USER);
+            }
+
+            modal.hide();
+            return true;
+        });
+        }
+
+        quill.getModule('toolbar').addHandler('image', imageHandler);
+
+        quill.on('image', imageHandler);
+
+        const textarea = document.getElementById('@Html.IdFor(x => x.Html)');
+        quill.on('text-change', (delta, oldDelta, source) => {
+            document.getElementById('@Html.IdFor(x => x.Html)').value = quill.root.innerHTML;
+            $(document).trigger('contentpreview:render');
+        });
     }
-
-    quill.getModule('toolbar').addHandler('image', imageHandler);
-
-    quill.on('image', imageHandler);
-
-    const textarea = document.getElementById('@Html.IdFor(x => x.Html)');
-    quill.on('text-change', (delta, oldDelta, source) => {
-      document.getElementById('@Html.IdFor(x => x.Html)').value = quill.root.innerHTML;
-    });
   });
 </script>
