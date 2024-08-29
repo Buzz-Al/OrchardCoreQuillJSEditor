@@ -24,7 +24,7 @@
     <label asp-for="Html" class="@Orchard.GetLabelClasses()">@Model.PartFieldDefinition.DisplayName()</label>
     <div class="@Orchard.GetEndClasses()">
         @await DisplayAsync(await New.ShortcodeModal())
-        <div id="@Html.IdFor(m => m.Html)" class="form-control" style="border-radius: 0;">
+        <div id="@Html.IdFor(m => m.Html)_editor" class="form-control" style="border-radius: 0;">
           @Html.Raw(Model.Html)
         </div>
         @if (!string.IsNullOrEmpty(settings.Hint))
@@ -34,11 +34,9 @@
     </div>
 </div>
 
-<textarea id="@Html.IdFor(x => x.Html)_value" asp-for="Html" class="d-none">
+<textarea id="@Html.IdFor(x => x.Html)" asp-for="Html" class="d-none"></textarea>
 
-</textarea>
-
-<style asp-name="@($"quill-{theme}")"  at="Head"></style>
+<style asp-name="@($"quill-{theme}")"></style>
 
 <script asp-name="quill" at="Foot"></script>
 <script at="Foot">
@@ -46,7 +44,7 @@
 
     const toolbarSettings = @Html.Raw(quillSettings.ToolbarOptions);
     const quill = new Quill(
-      '#@Html.IdFor(m => m.Html)',
+      '#@Html.IdFor(m => m.Html)_editor',
       {
         modules: {
           toolbar: toolbarSettings,
@@ -80,9 +78,9 @@
 
     quill.on('image', imageHandler);
 
-    const textarea = document.getElementById('@Html.IdFor(x => x.Html)_value');
+    const textarea = document.getElementById('@Html.IdFor(x => x.Html)');
     quill.on('text-change', (delta, oldDelta, source) => {
-      document.getElementById('@Html.IdFor(x => x.Html)_value').value = quill.root.innerHTML;
+      document.getElementById('@Html.IdFor(x => x.Html)').value = quill.root.innerHTML;
     });
   });
 </script>
