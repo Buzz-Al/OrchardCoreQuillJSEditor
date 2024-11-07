@@ -94,7 +94,7 @@
 
         const textarea = document.getElementById('@Html.IdFor(x => x.Html)');
         quill.on('text-change', (delta, oldDelta, source) => {
-            document.getElementById('@Html.IdFor(x => x.Html)').value = quill.root.innerHTML;
+            document.getElementById('@Html.IdFor(x => x.Html)').value = quill.getSemanticHTML();
             $(document).trigger('contentpreview:render');
         });
     }
