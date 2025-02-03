@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentManagement.Metadata.Models;
 using OrchardCore.ContentTypes.Editors;
+using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.DisplayManagement.Views;
 using OrchardCore.Mvc.Utilities;
 
@@ -18,7 +19,7 @@ namespace Buzz.OrchardCore.Quilljs.Settings
             S = localizer;
         }
 
-        public override IDisplayResult Edit(ContentPartFieldDefinition partFieldDefinition)
+        public override IDisplayResult Edit(ContentPartFieldDefinition partFieldDefinition, BuildEditorContext context)
         {
             return Initialize<QuillSettingsViewModel>("HtmlFieldQuillEditorSettings_Edit", model =>
             {
@@ -45,7 +46,7 @@ namespace Buzz.OrchardCore.Quilljs.Settings
                 context.Builder.WithSettings(settings);
             }
 
-            return Edit(partFieldDefinition);
+            return Edit(partFieldDefinition, context);
         }
     }
 }
