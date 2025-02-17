@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <AspNetCorePackagesVersion>8.0</AspNetCorePackagesVersion>
-        <OrchardCoreVersion>2.1.4</OrchardCoreVersion>
+        <OrchardCoreVersion>2.1.5</OrchardCoreVersion>
     </PropertyGroup>
 
 </Project>
