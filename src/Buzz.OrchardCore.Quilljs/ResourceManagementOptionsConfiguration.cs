@@ -11,19 +11,22 @@ namespace Buzz.OrchardCore.Quilljs
     {
       _manifest = new ResourceManifest();
 
+      // INFO: A modified version of QuillJs that allows the user to add soft breaks
+      // LINK: https://github.com/slab/quill/pull/4565/files
+      // This was built locally and added manually
       _manifest
           .DefineScript("quill")
-          .SetCdn("https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js")
+          .SetUrl("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.js")
           .SetVersion("2.0.2");
 
       _manifest
         .DefineStyle("quill-bubble")
-        .SetCdn("https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.bubble.css")
+        .SetCdn("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.bubble.css")
         .SetVersion("2.0.2");
 
       _manifest
         .DefineStyle("quill-snow")
-        .SetCdn("https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.min.css")
+        .SetCdn("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.snow.css")
         .SetVersion("2.0.2");
     }
 
