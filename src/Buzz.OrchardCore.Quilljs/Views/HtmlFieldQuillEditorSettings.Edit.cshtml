@@ -165,7 +165,7 @@
                 @for (int i = 0; i < Model.CustomColors.Count; i++)
                 {
                     <div class="color-item d-flex align-items-center border rounded p-2" data-color="@Model.CustomColors[i]">
-                        <input type="hidden" name="CustomColors[@i]" value="@Model.CustomColors[i]" />
+                        <input type="hidden" asp-for="CustomColors[i]" />
                         <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: @Model.CustomColors[i]; border: 1px solid #dee2e6; border-radius: 4px;"></div>
                         <span class="me-2">@Model.CustomColors[i]</span>
                         <button type="button" class="btn btn-sm btn-danger remove-color-btn">@T["Remove"]</button>
@@ -182,24 +182,52 @@
         const colorList = document.getElementById('color-list');
         const addColorBtn = document.getElementById('add-color-btn');
         const newColorInput = document.getElementById('new-color-input');
-        let colorIndex = @Model.CustomColors.Count;
+
+        // Get the field name prefix from existing hidden input (if any)
+        const existingInput = colorList.querySelector('input[type="hidden"]');
+        let fieldNamePrefix = '';
+        if (existingInput) {
+            fieldNamePrefix = existingInput.name.substring(0, existingInput.name.lastIndexOf('[') + 1);
+        } else {
+            @{
+                var fieldName = Html.NameFor(m => m.CustomColors).ToString();
+            }
+            fieldNamePrefix = '@fieldName' + '[';
+        }
 
         addColorBtn.addEventListener('click', function() {
             const color = newColorInput.value;
             addColorToList(color);
-            colorIndex++;
         });
 
         function addColorToList(color) {
+            const currentIndex = colorList.querySelectorAll('.color-item').length;
             const colorItem = document.createElement('div');
             colorItem.className = 'color-item d-flex align-items-center border rounded p-2';
             colorItem.setAttribute('data-color', color);
-            colorItem.innerHTML = `
-                <input type="hidden" name="CustomColors[${colorIndex}]" value="${color}" />
-                <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: ${color}; border: 1px solid #dee2e6; border-radius: 4px;"></div>
-                <span class="me-2">${color}</span>
-                <button type="button" class="btn btn-sm btn-danger remove-color-btn">@T["Remove"]</button>
-            `;
+
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = fieldNamePrefix + currentIndex + ']';
+            hiddenInput.value = color;
+
+            const preview = document.createElement('div');
+            preview.className = 'color-preview me-2';
+            preview.style.cssText = 'width: 30px; height: 30px; background-color: ' + color + '; border: 1px solid #dee2e6; border-radius: 4px;';
+
+            const colorText = document.createElement('span');
+            colorText.className = 'me-2';
+            colorText.textContent = color;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-danger remove-color-btn';
+            removeBtn.textContent = '@T["Remove"]';
+
+            colorItem.appendChild(hiddenInput);
+            colorItem.appendChild(preview);
+            colorItem.appendChild(colorText);
+            colorItem.appendChild(removeBtn);
             colorList.appendChild(colorItem);
         }
 
@@ -207,7 +235,17 @@
         colorList.addEventListener('click', function(e) {
             if (e.target.classList.contains('remove-color-btn')) {
                 e.target.closest('.color-item').remove();
+                reindexColors();
             }
         });
+
+        // Re-index all color inputs to maintain consecutive indexes (required for ASP.NET Core list binding)
+        function reindexColors() {
+            const colorItems = colorList.querySelectorAll('.color-item');
+            colorItems.forEach((item, index) => {
+                const input = item.querySelector('input[type="hidden"]');
+                input.name = `${fieldNamePrefix}${index}]`;
+            });
+        }
     })();
 </script>
