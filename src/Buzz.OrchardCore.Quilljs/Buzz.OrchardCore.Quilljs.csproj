@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Rewrite" />
-    <PackageReference Include="FluentExcel" />
   </ItemGroup>
 
 </Project>
