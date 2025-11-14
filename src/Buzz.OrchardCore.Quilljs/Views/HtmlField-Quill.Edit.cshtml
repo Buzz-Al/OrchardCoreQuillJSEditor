@@ -25,7 +25,10 @@
     <div class="@Orchard.GetEndClasses()">
         @await DisplayAsync(await New.ShortcodeModal())
 
-        <div id="@Html.IdFor(m => m.Html)_editor" class="form-control @Html.Raw((quillSettings.Theme == QuillTheme.Bubble) ? "bubble": "")" style="@Html.Raw((quillSettings.Theme == QuillTheme.Snow) ? "border-radius: 0;": "")">
+        <div id="@Html.IdFor(m => m.Html)_editor"
+             class="form-control @Html.Raw((quillSettings.Theme == QuillTheme.Bubble) ? "bubble": "")"
+             style="@Html.Raw((quillSettings.Theme == QuillTheme.Snow) ? "border-radius: 0;": "")"
+             data-toolbar-config="@quillSettings.GenerateQuillJson()">
           @Html.Raw(Model.Html)
         </div>
         @if (!string.IsNullOrEmpty(settings.Hint))
@@ -52,11 +55,15 @@
 <script at="Foot">
   $(function () {
 
-    const toolbarSettings = @Html.Raw(quillSettings.ToolbarOptions);
     var quillEditor = document.getElementById('@Html.IdFor(x => x.Html)');
 
     if(quillEditor)
     {
+        // Get toolbar configuration from data attribute (secure, HTML-encoded by Razor)
+        const editorElement = document.getElementById('@Html.IdFor(m => m.Html)_editor');
+        const toolbarConfigJson = editorElement.getAttribute('data-toolbar-config');
+        const toolbarSettings = toolbarConfigJson ? JSON.parse(toolbarConfigJson) : [];
+
         const quill = new Quill(
           '#@Html.IdFor(m => m.Html)_editor',
           {
