@@ -58,34 +58,34 @@
     if(quillEditor)
     {
         const quill = new Quill(
-        '#@Html.IdFor(m => m.Html)_editor',
-        {
-            modules: {
-            toolbar: toolbarSettings,
-            },
-            theme: '@theme'
-        }
+          '#@Html.IdFor(m => m.Html)_editor',
+          {
+              modules: {
+              toolbar: toolbarSettings,
+              },
+              theme: '@theme'
+          }
         );
 
         function imageHandler() {
 
-        $("#mediaApp").detach().appendTo('#mediaModalHtmlField .modal-body');
-        $("#mediaApp").show();
-        mediaApp.selectedMedias = [];
-        var modal = new bootstrap.Modal($("#mediaModalHtmlField"));
-        modal.show();
+          $("#mediaApp").detach().appendTo('#mediaModalHtmlField .modal-body');
+          $("#mediaApp").show();
+          mediaApp.selectedMedias = [];
+          var modal = new bootstrap.Modal($("#mediaModalHtmlField"));
+          modal.show();
 
-        //disable an reset on click event over the button to avoid issue if press button multiple times or have multiple editor
-        $('#mediaHtmlFieldSelectButton').off('click');
-        $('#mediaHtmlFieldSelectButton').on('click', function (v) {
-            var range = quill.getSelection();
-            for (i = 0; i < mediaApp.selectedMedias.length; i++) {
-                quill.insertEmbed(range.index, 'image', mediaApp.selectedMedias[i].url, Quill.sources.USER);
-            }
+          //disable an reset on click event over the button to avoid issue if press button multiple times or have multiple editor
+          $('#mediaHtmlFieldSelectButton').off('click');
+          $('#mediaHtmlFieldSelectButton').on('click', function (v) {
+              var range = quill.getSelection();
+              for (i = 0; i < mediaApp.selectedMedias.length; i++) {
+                  quill.insertEmbed(range.index, 'image', mediaApp.selectedMedias[i].url, Quill.sources.USER);
+              }
 
-            modal.hide();
-            return true;
-        });
+              modal.hide();
+              return true;
+          });
         }
 
         quill.getModule('toolbar').addHandler('image', imageHandler);
