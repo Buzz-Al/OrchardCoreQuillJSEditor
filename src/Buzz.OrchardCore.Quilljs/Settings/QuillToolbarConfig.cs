@@ -109,7 +109,7 @@ public class QuillToolbarConfig
         if (Styles.HasFlag(StyleButtons.Font)) fontGroup.Add(new { font = Array.Empty<string>() });
         if (Styles.HasFlag(StyleButtons.Size))
         {
-            fontGroup.Add(new { size = new[] { "small", false, "large", "huge" } });
+            fontGroup.Add(new { size = new object[] { "small", false, "large", "huge" } });
         }
         if (fontGroup.Any()) toolbarGroups.Add(fontGroup);
 
