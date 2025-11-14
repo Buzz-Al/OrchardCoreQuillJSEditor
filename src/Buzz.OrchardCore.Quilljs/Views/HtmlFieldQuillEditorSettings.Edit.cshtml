@@ -2,59 +2,212 @@
 
 <div id="@Html.IdFor(m => m)" class="field-editor field-editor-quill">
 
-    <div class="mb-3 row">
-        <div class="col-large col-12 col-sm-12 col-md-12 col-lg-12 col-xl-9">
-            <label asp-for="ToolbarOptions" class="form-label">@T["Enter the editor tool bar options"]</label>
-            <span class="hint"><a href="https://quilljs.com/docs/quickstart" target="_blank">@T["Documentation"]</a></span>
-            <textarea asp-for="ToolbarOptions" class="form-control" autofocus="autofocus"></textarea>
+    <div class="mb-3">
+        <label asp-for="Theme" class="form-label">@T["Theme"]</label>
+        <select asp-for="Theme" asp-items="Html.GetEnumSelectList<QuillTheme>()" class="form-select"></select>
+        <span class="hint">@T["Snow theme shows the toolbar at all times. Bubble theme shows toolbar on text selection."]</span>
+    </div>
+
+    <hr />
+
+    <h5>@T["Toolbar Buttons"]</h5>
+    <p class="text-muted">@T["Select which buttons to display in the editor toolbar"]</p>
+
+    <div class="row">
+        <!-- Formatting -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Text Formatting"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Bold" />
+                <label class="form-check-label" asp-for="Bold">@T["Bold"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Italic" />
+                <label class="form-check-label" asp-for="Italic">@T["Italic"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Underline" />
+                <label class="form-check-label" asp-for="Underline">@T["Underline"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Strike" />
+                <label class="form-check-label" asp-for="Strike">@T["Strikethrough"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Code" />
+                <label class="form-check-label" asp-for="Code">@T["Inline Code"]</label>
+            </div>
+        </div>
+
+        <!-- Blocks -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Blocks"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Blockquote" />
+                <label class="form-check-label" asp-for="Blockquote">@T["Blockquote"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="CodeBlock" />
+                <label class="form-check-label" asp-for="CodeBlock">@T["Code Block"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Header1" />
+                <label class="form-check-label" asp-for="Header1">@T["Header 1"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Header2" />
+                <label class="form-check-label" asp-for="Header2">@T["Header 2"]</label>
+            </div>
+        </div>
+
+        <!-- Lists -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Lists"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="OrderedList" />
+                <label class="form-check-label" asp-for="OrderedList">@T["Numbered List"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="BulletList" />
+                <label class="form-check-label" asp-for="BulletList">@T["Bullet List"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="CheckList" />
+                <label class="form-check-label" asp-for="CheckList">@T["Checklist"]</label>
+            </div>
+        </div>
+
+        <!-- Media -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Media"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Link" />
+                <label class="form-check-label" asp-for="Link">@T["Link"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Image" />
+                <label class="form-check-label" asp-for="Image">@T["Image"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Video" />
+                <label class="form-check-label" asp-for="Video">@T["Video"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Formula" />
+                <label class="form-check-label" asp-for="Formula">@T["Formula"]</label>
+            </div>
+        </div>
+
+        <!-- Styles -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Styles"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Color" />
+                <label class="form-check-label" asp-for="Color">@T["Text Color"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Background" />
+                <label class="form-check-label" asp-for="Background">@T["Background Color"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Font" />
+                <label class="form-check-label" asp-for="Font">@T["Font Family"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Size" />
+                <label class="form-check-label" asp-for="Size">@T["Font Size"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Align" />
+                <label class="form-check-label" asp-for="Align">@T["Text Alignment"]</label>
+            </div>
+        </div>
+
+        <!-- Advanced -->
+        <div class="col-md-6 mb-3">
+            <h6 class="text-muted">@T["Advanced"]</h6>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Script" />
+                <label class="form-check-label" asp-for="Script">@T["Superscript / Subscript"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Indent" />
+                <label class="form-check-label" asp-for="Indent">@T["Indent / Outdent"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Direction" />
+                <label class="form-check-label" asp-for="Direction">@T["Text Direction (RTL)"]</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" asp-for="Clean" />
+                <label class="form-check-label" asp-for="Clean">@T["Remove Formatting"]</label>
+            </div>
         </div>
     </div>
 
-    <label for="Theme">Choose a theme:</label>
+    <hr />
 
-    <select asp-for="Theme" asp-items="Html.GetEnumSelectList<QuillTheme>()" class="form-select">
-    </select>
+    <!-- Custom Colors -->
+    <div class="mb-3">
+        <h5>@T["Custom Color Palette"]</h5>
+        <p class="text-muted">@T["Define custom colors for the text color and background color pickers. Leave empty to use theme defaults."]</p>
+
+        <div id="color-palette-editor">
+            <div class="mb-3">
+                <label class="form-label">@T["Add Colors"]</label>
+                <div class="input-group">
+                    <input type="color" id="new-color-input" class="form-control form-control-color" value="#000000" />
+                    <button type="button" class="btn btn-primary" id="add-color-btn">@T["Add Color"]</button>
+                </div>
+            </div>
+
+            <div id="color-list" class="d-flex flex-wrap gap-2">
+                @for (int i = 0; i < Model.CustomColors.Count; i++)
+                {
+                    <div class="color-item d-flex align-items-center border rounded p-2" data-color="@Model.CustomColors[i]">
+                        <input type="hidden" name="CustomColors[@i]" value="@Model.CustomColors[i]" />
+                        <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: @Model.CustomColors[i]; border: 1px solid #dee2e6; border-radius: 4px;"></div>
+                        <span class="me-2">@Model.CustomColors[i]</span>
+                        <button type="button" class="btn btn-sm btn-danger remove-color-btn">@T["Remove"]</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
-<style asp-name="codemirror"></style>
-<script asp-name="codemirror" at="Foot"></script>
-<script asp-name="codemirror-addon-display-autorefresh" at="Foot"></script>
-<script asp-name="codemirror-mode-javascript" at="Foot"></script>
 <script at="Foot">
-    $(function () {
-        var toolbarOptionsTextArea = document.getElementById('@Html.IdFor(x => x.ToolbarOptions)');
-        var editor = CodeMirror.fromTextArea(toolbarOptionsTextArea, {
-            autoRefresh: true,
-            lineNumbers: true,
-            matchBrackets: true,
-            mode: { name: "javascript" }
-    });
-  @{
-    if (string.IsNullOrEmpty(Model.ToolbarOptions))
-    {
-      string fullToolbarOptions = @"[
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],
-          ['link', 'image', 'video', 'formula'],
+    (function() {
+        // Color palette management
+        const colorList = document.getElementById('color-list');
+        const addColorBtn = document.getElementById('add-color-btn');
+        const newColorInput = document.getElementById('new-color-input');
+        let colorIndex = @Model.CustomColors.Count;
 
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
+        addColorBtn.addEventListener('click', function() {
+            const color = newColorInput.value;
+            addColorToList(color);
+            colorIndex++;
+        });
 
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        function addColorToList(color) {
+            const colorItem = document.createElement('div');
+            colorItem.className = 'color-item d-flex align-items-center border rounded p-2';
+            colorItem.setAttribute('data-color', color);
+            colorItem.innerHTML = `
+                <input type="hidden" name="CustomColors[${colorIndex}]" value="${color}" />
+                <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: ${color}; border: 1px solid #dee2e6; border-radius: 4px;"></div>
+                <span class="me-2">${color}</span>
+                <button type="button" class="btn btn-sm btn-danger remove-color-btn">@T["Remove"]</button>
+            `;
+            colorList.appendChild(colorItem);
+        }
 
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-          [{ 'font': [] }],
-          [{ 'align': [] }],
-
-          ['clean']                                         // remove formatting button
-        ]";
-
-        <text>editor.setValue(`@Html.Raw(fullToolbarOptions)`);</text>
-    }
-}
-});
+        // Remove color button handler (event delegation)
+        colorList.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-color-btn')) {
+                e.target.closest('.color-item').remove();
+            }
+        });
+    })();
 </script>
