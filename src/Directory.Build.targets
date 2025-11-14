@@ -36,6 +36,7 @@
     <ItemGroup>
         <PackageReference Update="Microsoft.Extensions.Http" Version="6.0.0" />
         <PackageReference Update="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
+        <PackageReference Update="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
