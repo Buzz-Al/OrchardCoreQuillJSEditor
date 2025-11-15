@@ -148,27 +148,43 @@
     <hr />
 
     <!-- Custom Colors -->
-    <div class="mb-3">
-        <h5>@T["Custom Color Palette"]</h5>
-        <p class="text-muted">@T["Define custom colors for the text color and background color pickers. Leave empty to use theme defaults."]</p>
+    <div class="mb-4">
+        <h5 class="mb-2">@T["Custom Color Palette"]</h5>
+        <p class="text-muted small mb-3">@T["Define custom colors for the text color and background color pickers. Leave empty to use theme defaults."]</p>
 
-        <div id="color-palette-editor">
-            <div class="mb-3">
-                <label class="form-label">@T["Add Colors"]</label>
-                <div class="input-group">
-                    <input type="color" id="new-color-input" class="form-control form-control-color" value="#000000" />
-                    <button type="button" class="btn btn-primary" id="add-color-btn">@T["Add Color"]</button>
+        <div id="color-palette-editor" class="card">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-uppercase text-muted mb-2">@T["Add New Color"]</label>
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="color" id="new-color-input" class="form-control form-control-color" value="#000000" title="@T["Choose color"]" style="width: 56px;" />
+                        <button type="button" class="btn btn-primary" id="add-color-btn">
+                            <i class="fa-solid fa-plus me-1"></i>@T["Add Color"]
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div id="color-list" class="d-flex flex-wrap gap-2">
-                @for (int i = 0; i < Model.CustomColors.Count; i++)
+                <div class="mb-2">
+                    <label class="form-label fw-semibold small text-uppercase text-muted">@T["Color Palette"]</label>
+                </div>
+                <div id="color-list" class="d-flex flex-wrap gap-2 p-3 bg-light rounded-3 min-vh-auto" style="min-height: 60px;">
+                    @for (int i = 0; i < Model.CustomColors.Count; i++)
+                    {
+                        <div class="color-item d-inline-flex align-items-center bg-white border rounded-pill shadow-sm px-2 py-1" data-color="@Model.CustomColors[i]" style="transition: all 0.2s ease;">
+                            <input type="hidden" asp-for="CustomColors[i]" />
+                            <div class="color-preview me-2 rounded-circle shadow-sm" style="width: 32px; height: 32px; background-color: @Model.CustomColors[i]; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);"></div>
+                            <span class="me-2 font-monospace fw-semibold text-dark" style="font-size: 0.875rem;">@Model.CustomColors[i]</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle remove-color-btn ms-1" style="width: 24px; height: 24px; padding: 0; line-height: 1;" title="@T["Remove color"]">
+                                <i class="fa-solid fa-xmark" style="font-size: 0.75rem;"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+                @if (Model.CustomColors.Count == 0)
                 {
-                    <div class="color-item d-flex align-items-center border rounded p-2" data-color="@Model.CustomColors[i]">
-                        <input type="hidden" asp-for="CustomColors[i]" />
-                        <div class="color-preview me-2" style="width: 30px; height: 30px; background-color: @Model.CustomColors[i]; border: 1px solid #dee2e6; border-radius: 4px;"></div>
-                        <span class="me-2">@Model.CustomColors[i]</span>
-                        <button type="button" class="btn btn-sm btn-danger remove-color-btn">@T["Remove"]</button>
+                    <div id="empty-state" class="text-center text-muted py-4">
+                        <i class="fa-solid fa-palette fa-2x mb-2 opacity-25"></i>
+                        <p class="mb-0 small">@T["No custom colors added yet. Add colors using the picker above."]</p>
                     </div>
                 }
             </div>
@@ -198,12 +214,14 @@
         addColorBtn.addEventListener('click', function() {
             const color = newColorInput.value;
             addColorToList(color);
+            hideEmptyState();
         });
 
         function addColorToList(color) {
             const currentIndex = colorList.querySelectorAll('.color-item').length;
             const colorItem = document.createElement('div');
-            colorItem.className = 'color-item d-flex align-items-center border rounded p-2';
+            colorItem.className = 'color-item d-inline-flex align-items-center bg-white border rounded-pill shadow-sm px-2 py-1';
+            colorItem.style.cssText = 'transition: all 0.2s ease;';
             colorItem.setAttribute('data-color', color);
 
             const hiddenInput = document.createElement('input');
@@ -212,17 +230,20 @@
             hiddenInput.value = color;
 
             const preview = document.createElement('div');
-            preview.className = 'color-preview me-2';
-            preview.style.cssText = 'width: 30px; height: 30px; background-color: ' + color + '; border: 1px solid #dee2e6; border-radius: 4px;';
+            preview.className = 'color-preview me-2 rounded-circle shadow-sm';
+            preview.style.cssText = 'width: 32px; height: 32px; background-color: ' + color + '; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.1);';
 
             const colorText = document.createElement('span');
-            colorText.className = 'me-2';
+            colorText.className = 'me-2 font-monospace fw-semibold text-dark';
+            colorText.style.fontSize = '0.875rem';
             colorText.textContent = color;
 
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.className = 'btn btn-sm btn-danger remove-color-btn';
-            removeBtn.textContent = '@T["Remove"]';
+            removeBtn.className = 'btn btn-sm btn-outline-danger rounded-circle remove-color-btn ms-1';
+            removeBtn.style.cssText = 'width: 24px; height: 24px; padding: 0; line-height: 1;';
+            removeBtn.title = '@T["Remove color"]';
+            removeBtn.innerHTML = '<i class="fa-solid fa-xmark" style="font-size: 0.75rem;"></i>';
 
             colorItem.appendChild(hiddenInput);
             colorItem.appendChild(preview);
@@ -231,11 +252,28 @@
             colorList.appendChild(colorItem);
         }
 
+        function hideEmptyState() {
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        function showEmptyState() {
+            const emptyState = document.getElementById('empty-state');
+            if (emptyState && colorList.querySelectorAll('.color-item').length === 0) {
+                emptyState.style.display = 'block';
+            }
+        }
+
         // Remove color button handler (event delegation)
         colorList.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-color-btn')) {
-                e.target.closest('.color-item').remove();
+            // Handle clicks on button or icon inside button
+            const removeBtn = e.target.closest('.remove-color-btn');
+            if (removeBtn) {
+                removeBtn.closest('.color-item').remove();
                 reindexColors();
+                showEmptyState();
             }
         });
 
@@ -246,6 +284,11 @@
                 const input = item.querySelector('input[type="hidden"]');
                 input.name = `${fieldNamePrefix}${index}]`;
             });
+        }
+
+        // Initialize: hide empty state if colors exist
+        if (colorList.querySelectorAll('.color-item').length > 0) {
+            hideEmptyState();
         }
     })();
 </script>
