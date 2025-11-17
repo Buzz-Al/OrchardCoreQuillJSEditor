@@ -25,40 +25,10 @@ public class HtmlFieldQuillEditorSettingsDriver : ContentPartFieldDefinitionDisp
         {
             var settings = partFieldDefinition.GetSettings<HtmlFieldQuillEditorSettings>();
 
-            // Populate ViewModel from settings using factory method
-            var viewModel = QuillSettingsViewModel.FromToolbarConfig(
-                settings.ToolbarConfig,
-                settings.Theme
-            );
-
-            // Copy properties to model (required by OrchardCore's Initialize pattern)
-            model.Theme = viewModel.Theme;
-            model.Bold = viewModel.Bold;
-            model.Italic = viewModel.Italic;
-            model.Underline = viewModel.Underline;
-            model.Strike = viewModel.Strike;
-            model.Code = viewModel.Code;
-            model.Blockquote = viewModel.Blockquote;
-            model.CodeBlock = viewModel.CodeBlock;
-            model.Header1 = viewModel.Header1;
-            model.Header2 = viewModel.Header2;
-            model.OrderedList = viewModel.OrderedList;
-            model.BulletList = viewModel.BulletList;
-            model.CheckList = viewModel.CheckList;
-            model.Link = viewModel.Link;
-            model.Image = viewModel.Image;
-            model.Video = viewModel.Video;
-            model.Formula = viewModel.Formula;
-            model.Color = viewModel.Color;
-            model.Background = viewModel.Background;
-            model.Font = viewModel.Font;
-            model.Size = viewModel.Size;
-            model.Align = viewModel.Align;
-            model.Script = viewModel.Script;
-            model.Indent = viewModel.Indent;
-            model.Direction = viewModel.Direction;
-            model.Clean = viewModel.Clean;
-            model.CustomColors = viewModel.CustomColors;
+            // TODO Phase 3: Populate ViewModel from settings.ToolbarConfig.Groups
+            // For now, just load basic settings
+            model.Theme = settings.Theme;
+            model.CustomColors = settings.ToolbarConfig?.CustomColors ?? new();
         })
         .Location("Editor");
     }
