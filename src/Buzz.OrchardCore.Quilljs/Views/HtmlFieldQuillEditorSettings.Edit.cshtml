@@ -130,7 +130,6 @@
                                     <div class="toolbar-group card mb-3" data-group-id="@group.Id">
                                         <!-- Hidden inputs for group -->
                                         <input type="hidden" asp-for="Groups[groupIndex].Id" />
-                                        <input type="hidden" asp-for="Groups[groupIndex].Name" />
                                         <input type="hidden" asp-for="Groups[groupIndex].Order" />
 
                                         <div class="card-header d-flex align-items-center">
@@ -139,7 +138,7 @@
                                             </span>
                                             <input type="text"
                                                    class="form-control form-control-sm group-name-input"
-                                                   value="@group.Name"
+                                                   asp-for="Groups[groupIndex].Name"
                                                    placeholder="@T["Group name (optional)"]"
                                                    style="max-width: 200px;" />
                                             <span class="badge bg-secondary ms-2">@group.Buttons.Count @T["buttons"]</span>

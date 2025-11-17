@@ -53,6 +53,20 @@ public class HtmlFieldQuillEditorSettingsDriver : ContentPartFieldDefinitionDisp
             // Bind form data to ViewModel
             await context.Updater.TryUpdateModelAsync(model, Prefix);
 
+            // Debug logging
+            System.Diagnostics.Debug.WriteLine($"[Quill Settings] Prefix: {Prefix}");
+            System.Diagnostics.Debug.WriteLine($"[Quill Settings] Theme: {model.Theme}");
+            System.Diagnostics.Debug.WriteLine($"[Quill Settings] CustomColors Count: {model.CustomColors?.Count ?? 0}");
+            System.Diagnostics.Debug.WriteLine($"[Quill Settings] Groups Count: {model.Groups?.Count ?? 0}");
+            if (model.Groups != null)
+            {
+                for (int i = 0; i < model.Groups.Count; i++)
+                {
+                    var group = model.Groups[i];
+                    System.Diagnostics.Debug.WriteLine($"[Quill Settings] Group {i}: Id={group.Id}, Name={group.Name}, Buttons={group.Buttons?.Count ?? 0}");
+                }
+            }
+
             // Convert ViewModel to strongly-typed configuration
             var toolbarConfig = model.ToToolbarConfig();
 

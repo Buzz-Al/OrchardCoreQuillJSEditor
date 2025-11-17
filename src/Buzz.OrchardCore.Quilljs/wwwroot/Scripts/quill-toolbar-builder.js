@@ -10,7 +10,8 @@
     let state = {
         groups: [],
         buttonRegistry: {},
-        nextGroupId: 1
+        nextGroupId: 1,
+        prefix: '' // Will be detected from existing form inputs
     };
 
     // Initialize when DOM is ready
@@ -36,6 +37,17 @@
     function initializeState() {
         const groupElements = document.querySelectorAll('.toolbar-group');
         state.groups = [];
+
+        // Detect prefix from first hidden input
+        const firstHiddenInput = document.querySelector('.toolbar-group input[type="hidden"][name*=".Groups["]');
+        if (firstHiddenInput) {
+            const name = firstHiddenInput.name;
+            const match = name.match(/^(.+)\.Groups\[/);
+            if (match) {
+                state.prefix = match[1] + '.';
+                console.log('Detected prefix:', state.prefix);
+            }
+        }
 
         groupElements.forEach((groupEl, index) => {
             const groupId = groupEl.dataset.groupId || `group-${Date.now()}-${index}`;
@@ -142,6 +154,11 @@
                 updateButtonUsageIndicators();
                 syncStateToDOM();
             },
+            onUpdate: function () {
+                // Called when item is reordered within the same list
+                console.log('Button reordered within group');
+                syncStateToDOM();
+            },
             onEnd: function () {
                 syncStateToDOM();
             }
@@ -242,11 +259,14 @@
         groupEl.dataset.groupId = groupId;
 
         groupEl.innerHTML = `
+            <input type="hidden" name="${state.prefix}Groups[${groupCount}].Id" value="${groupId}" />
+            <input type="hidden" name="${state.prefix}Groups[${groupCount}].Order" value="${groupCount}" />
             <div class="card-header d-flex align-items-center">
                 <span class="group-drag-handle me-2" style="cursor: grab;">
                     <i class="fa-solid fa-grip-vertical text-muted"></i>
                 </span>
                 <input type="text" class="form-control form-control-sm group-name-input"
+                       name="${state.prefix}Groups[${groupCount}].Name"
                        placeholder="Group name (optional)" style="max-width: 200px;" />
                 <span class="badge bg-secondary ms-2 group-button-count">0 buttons</span>
                 <button type="button" class="btn btn-sm btn-link text-danger ms-auto delete-group-btn">
@@ -306,13 +326,7 @@
             });
         }
 
-        // Group name input
-        const nameInput = groupEl.querySelector('.group-name-input');
-        if (nameInput) {
-            nameInput.addEventListener('input', function () {
-                syncStateToDOM();
-            });
-        }
+        // Group name input - no listener needed, it's a regular form input with proper name attribute
     }
 
     /**
@@ -383,42 +397,75 @@
         const toolbarGroups = document.getElementById('toolbar-groups');
         const groups = toolbarGroups.querySelectorAll('.toolbar-group');
 
-        // Clear existing hidden inputs
-        toolbarGroups.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
-
         groups.forEach((groupEl, groupIndex) => {
             const groupId = groupEl.dataset.groupId;
-            const groupName = groupEl.querySelector('.group-name-input')?.value || '';
+            const groupNameInput = groupEl.querySelector('.group-name-input');
             const buttons = groupEl.querySelectorAll('.button-chip');
 
-            // Create hidden inputs for group
-            const groupIdInput = createHiddenInput(`Groups[${groupIndex}].Id`, groupId);
-            const groupNameInput = createHiddenInput(`Groups[${groupIndex}].Name`, groupName);
-            const groupOrderInput = createHiddenInput(`Groups[${groupIndex}].Order`, groupIndex);
+            // Update group hidden inputs (with prefix)
+            updateOrCreateHiddenInput(groupEl, `${state.prefix}Groups[${groupIndex}].Id`, groupId);
+            updateOrCreateHiddenInput(groupEl, `${state.prefix}Groups[${groupIndex}].Order`, groupIndex);
 
-            groupEl.appendChild(groupIdInput);
-            groupEl.appendChild(groupNameInput);
-            groupEl.appendChild(groupOrderInput);
+            // Update group name input's name attribute to match index (with prefix)
+            if (groupNameInput) {
+                groupNameInput.name = `${state.prefix}Groups[${groupIndex}].Name`;
+            }
 
-            // Create hidden inputs for buttons
+            // Update button hidden inputs (with prefix)
             buttons.forEach((buttonChip, buttonIndex) => {
                 const buttonType = buttonChip.dataset.buttonType;
                 const buttonValue = buttonChip.dataset.buttonValue || '';
 
-                const typeInput = createHiddenInput(`Groups[${groupIndex}].Buttons[${buttonIndex}].Type`, buttonType);
-                const valueInput = createHiddenInput(`Groups[${groupIndex}].Buttons[${buttonIndex}].Value`, buttonValue);
-                const orderInput = createHiddenInput(`Groups[${groupIndex}].Buttons[${buttonIndex}].Order`, buttonIndex);
-
-                buttonChip.appendChild(typeInput);
-                buttonChip.appendChild(valueInput);
-                buttonChip.appendChild(orderInput);
+                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Type`, buttonType);
+                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Value`, buttonValue);
+                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Order`, buttonIndex);
             });
 
             // Update button count
             updateGroupButtonCount(groupEl);
         });
 
+        // Debug: Log all form inputs
         console.log('State synced to DOM');
+        console.log('=== Form Inputs Debug ===');
+        groups.forEach((groupEl, groupIndex) => {
+            console.log(`Group ${groupIndex}:`);
+            const hiddenInputs = groupEl.querySelectorAll('input[type="hidden"]');
+            hiddenInputs.forEach(input => {
+                console.log(`  ${input.name} = ${input.value}`);
+            });
+            const nameInput = groupEl.querySelector('.group-name-input');
+            if (nameInput) {
+                console.log(`  ${nameInput.name} = ${nameInput.value}`);
+            }
+            const buttons = groupEl.querySelectorAll('.button-chip');
+            buttons.forEach((btn, btnIdx) => {
+                console.log(`  Button ${btnIdx}:`);
+                const btnInputs = btn.querySelectorAll('input[type="hidden"]');
+                btnInputs.forEach(input => {
+                    console.log(`    ${input.name} = ${input.value}`);
+                });
+            });
+        });
+        console.log('=========================');
+    }
+
+    /**
+     * Update existing hidden input or create new one if it doesn't exist
+     */
+    function updateOrCreateHiddenInput(parentEl, name, value) {
+        let input = parentEl.querySelector(`input[type="hidden"][name="${name}"]`);
+
+        if (input) {
+            // Update existing input (use != null to allow 0 and empty string)
+            input.value = value != null ? String(value) : '';
+        } else {
+            // Create new input
+            input = createHiddenInput(name, value);
+            parentEl.appendChild(input);
+        }
+
+        return input;
     }
 
     /**
@@ -428,7 +475,7 @@
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = name;
-        input.value = value || '';
+        input.value = value != null ? String(value) : '';
         return input;
     }
 
@@ -559,11 +606,14 @@
             groupEl.dataset.groupId = groupId;
 
             groupEl.innerHTML = `
+                <input type="hidden" name="${state.prefix}Groups[${index}].Id" value="${groupId}" />
+                <input type="hidden" name="${state.prefix}Groups[${index}].Order" value="${index}" />
                 <div class="card-header d-flex align-items-center">
                     <span class="group-drag-handle me-2" style="cursor: grab;">
                         <i class="fa-solid fa-grip-vertical text-muted"></i>
                     </span>
                     <input type="text" class="form-control form-control-sm group-name-input"
+                           name="${state.prefix}Groups[${index}].Name"
                            value="${groupDef.name}" placeholder="Group name (optional)" style="max-width: 200px;" />
                     <span class="badge bg-secondary ms-2 group-button-count">${groupDef.buttons.length} buttons</span>
                     <button type="button" class="btn btn-sm btn-link text-danger ms-auto delete-group-btn">
