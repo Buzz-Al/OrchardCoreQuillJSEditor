@@ -1,12 +1,13 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Buzz.OrchardCore.Quilljs.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentManagement.Metadata.Models;
 using OrchardCore.ContentTypes.Editors;
 using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.DisplayManagement.Views;
-using OrchardCore.Mvc.Utilities;
 
 namespace Buzz.OrchardCore.Quilljs.Settings;
 
@@ -25,11 +26,15 @@ public class HtmlFieldQuillEditorSettingsDriver : ContentPartFieldDefinitionDisp
         {
             var settings = partFieldDefinition.GetSettings<HtmlFieldQuillEditorSettings>();
 
+            // If no toolbar config or empty groups, use standard preset
+            var toolbarConfig = settings.ToolbarConfig;
+            if (toolbarConfig == null || toolbarConfig.Groups == null || toolbarConfig.Groups.Count == 0)
+            {
+                toolbarConfig = QuillToolbarConfig.CreateStandard();
+            }
+
             // Populate ViewModel from settings using factory method
-            var viewModel = QuillSettingsViewModel.FromToolbarConfig(
-                settings.ToolbarConfig,
-                settings.Theme
-            );
+            var viewModel = QuillSettingsViewModel.FromToolbarConfig(toolbarConfig, settings.Theme);
 
             // Copy properties to model (required by OrchardCore's Initialize pattern)
             model.Theme = viewModel.Theme;
