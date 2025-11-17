@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -6,200 +5,228 @@ using System.Text.Json;
 namespace Buzz.OrchardCore.Quilljs.Settings;
 
 /// <summary>
-/// Strongly-typed configuration for Quill.js toolbar options.
-/// Replaces raw JSON strings with type-safe properties.
+/// Configuration for Quill.js toolbar with groups and buttons.
 /// </summary>
 public class QuillToolbarConfig
 {
     /// <summary>
-    /// Formatting buttons (bold, italic, underline, strike, code)
+    /// Toolbar button groups. Groups create visual separators in the toolbar.
     /// </summary>
-    public FormattingButtons Formatting { get; set; } = FormattingButtons.None;
+    public List<ToolbarGroup> Groups { get; set; } = new();
 
     /// <summary>
-    /// Block-level formatting buttons (blockquote, code-block, headers)
+    /// Custom color palette for color/background pickers (hex codes like "#84BD00").
     /// </summary>
-    public BlockButtons Blocks { get; set; } = BlockButtons.None;
+    public List<string> CustomColors { get; set; } = new();
 
     /// <summary>
-    /// List formatting buttons (ordered, bullet, check)
+    /// Validates the toolbar configuration.
     /// </summary>
-    public ListButtons Lists { get; set; } = ListButtons.None;
+    public bool IsValid(out List<string> errors)
+    {
+        errors = new List<string>();
 
-    /// <summary>
-    /// Media insertion buttons (link, image, video, formula)
-    /// </summary>
-    public MediaButtons Media { get; set; } = MediaButtons.None;
+        if (Groups == null || Groups.Count == 0)
+        {
+            errors.Add("Toolbar must have at least one group.");
+            return false;
+        }
 
-    /// <summary>
-    /// Text styling buttons (color, background, font, size, align)
-    /// </summary>
-    public StyleButtons Styles { get; set; } = StyleButtons.None;
+        var hasButtons = Groups.Any(g => g.Buttons != null && g.Buttons.Count > 0);
+        if (!hasButtons)
+        {
+            errors.Add("Toolbar must have at least one button.");
+            return false;
+        }
 
-    /// <summary>
-    /// Advanced formatting buttons (script, indent, direction, clean)
-    /// </summary>
-    public AdvancedButtons Advanced { get; set; } = AdvancedButtons.None;
+        // Validate button types
+        foreach (var group in Groups)
+        {
+            if (group.Buttons == null) continue;
 
-    /// <summary>
-    /// Custom color palette for color/background pickers.
-    /// Use hex color codes (e.g., "#84BD00").
-    /// Empty list means use Quill theme defaults.
-    /// </summary>
-    public List<string> CustomColors { get; set; } = new List<string>();
+            foreach (var button in group.Buttons)
+            {
+                if (string.IsNullOrEmpty(button.Type))
+                {
+                    errors.Add($"Button in group '{group.Name}' has no type.");
+                    continue;
+                }
+
+                if (!ButtonRegistry.IsValid(button.Type))
+                {
+                    errors.Add($"Invalid button type: '{button.Type}'.");
+                }
+
+                var metadata = ButtonRegistry.Get(button.Type);
+                if (metadata.RequiresValue && string.IsNullOrEmpty(button.Value))
+                {
+                    errors.Add($"Button '{button.Type}' requires a value.");
+                }
+            }
+        }
+
+        // Validate custom colors
+        if (CustomColors != null)
+        {
+            foreach (var color in CustomColors)
+            {
+                if (!System.Text.RegularExpressions.Regex.IsMatch(color, "^#[0-9A-Fa-f]{6}$"))
+                {
+                    errors.Add($"Invalid hex color: '{color}'.");
+                }
+            }
+        }
+
+        return errors.Count == 0;
+    }
 
     /// <summary>
     /// Generates Quill-compatible toolbar configuration JSON.
     /// </summary>
-    /// <returns>JSON array of toolbar button groups</returns>
     public string GenerateQuillJson()
     {
         var toolbarGroups = new List<object>();
 
-        // Formatting group
-        var formattingGroup = new List<string>();
-        if (Formatting.HasFlag(FormattingButtons.Bold)) formattingGroup.Add("bold");
-        if (Formatting.HasFlag(FormattingButtons.Italic)) formattingGroup.Add("italic");
-        if (Formatting.HasFlag(FormattingButtons.Underline)) formattingGroup.Add("underline");
-        if (Formatting.HasFlag(FormattingButtons.Strike)) formattingGroup.Add("strike");
-        if (Formatting.HasFlag(FormattingButtons.Code)) formattingGroup.Add("code");
-        if (formattingGroup.Any()) toolbarGroups.Add(formattingGroup);
-
-        // Block group
-        var blockGroup = new List<object>();
-        if (Blocks.HasFlag(BlockButtons.Blockquote)) blockGroup.Add("blockquote");
-        if (Blocks.HasFlag(BlockButtons.CodeBlock)) blockGroup.Add("code-block");
-        if (blockGroup.Any()) toolbarGroups.Add(blockGroup);
-
-        // Headers group (if any header selected)
-        var headerGroup = new List<object>();
-        if (Blocks.HasFlag(BlockButtons.Header1)) headerGroup.Add(new { header = 1 });
-        if (Blocks.HasFlag(BlockButtons.Header2)) headerGroup.Add(new { header = 2 });
-        if (headerGroup.Any()) toolbarGroups.Add(headerGroup);
-
-        // Media group
-        var mediaGroup = new List<string>();
-        if (Media.HasFlag(MediaButtons.Link)) mediaGroup.Add("link");
-        if (Media.HasFlag(MediaButtons.Image)) mediaGroup.Add("image");
-        if (Media.HasFlag(MediaButtons.Video)) mediaGroup.Add("video");
-        if (Media.HasFlag(MediaButtons.Formula)) mediaGroup.Add("formula");
-        if (mediaGroup.Any()) toolbarGroups.Add(mediaGroup);
-
-        // Lists group
-        var listGroup = new List<object>();
-        if (Lists.HasFlag(ListButtons.Ordered)) listGroup.Add(new { list = "ordered" });
-        if (Lists.HasFlag(ListButtons.Bullet)) listGroup.Add(new { list = "bullet" });
-        if (Lists.HasFlag(ListButtons.Check)) listGroup.Add(new { list = "check" });
-        if (listGroup.Any()) toolbarGroups.Add(listGroup);
-
-        // Style group - Colors
-        var colorGroup = new List<object>();
-        if (Styles.HasFlag(StyleButtons.Color))
+        foreach (var group in Groups.OrderBy(g => g.Order))
         {
-            colorGroup.Add(new { color = CustomColors.Any() ? CustomColors.ToArray() : Array.Empty<string>() });
-        }
-        if (Styles.HasFlag(StyleButtons.Background))
-        {
-            colorGroup.Add(new { background = CustomColors.Any() ? CustomColors.ToArray() : Array.Empty<string>() });
-        }
-        if (colorGroup.Any()) toolbarGroups.Add(colorGroup);
+            var groupArray = new List<object>();
 
-        // Style group - Font and Size
-        var fontGroup = new List<object>();
-        if (Styles.HasFlag(StyleButtons.Font)) fontGroup.Add(new { font = Array.Empty<string>() });
-        if (Styles.HasFlag(StyleButtons.Size))
-        {
-            fontGroup.Add(new { size = new object[] { "small", false, "large", "huge" } });
-        }
-        if (fontGroup.Any()) toolbarGroups.Add(fontGroup);
-
-        // Style group - Alignment
-        if (Styles.HasFlag(StyleButtons.Align))
-        {
-            toolbarGroups.Add(new List<object> { new { align = Array.Empty<string>() } });
-        }
-
-        // Advanced group - Script
-        if (Advanced.HasFlag(AdvancedButtons.Script))
-        {
-            toolbarGroups.Add(new List<object>
+            foreach (var button in group.Buttons.OrderBy(b => b.Order))
             {
-                new { script = "sub" },
-                new { script = "super" }
-            });
-        }
+                object buttonConfig = button.Type switch
+                {
+                    // Simple string buttons
+                    "bold" or "italic" or "underline" or "strike" or "code"
+                    or "blockquote" or "code-block" or "link" or "image"
+                    or "video" or "formula" or "clean" => button.Type,
 
-        // Advanced group - Indent
-        if (Advanced.HasFlag(AdvancedButtons.Indent))
-        {
-            toolbarGroups.Add(new List<object>
+                    // Parameterized buttons (object notation)
+                    "header" => new { header = int.Parse(button.Value) },
+                    "list" => new { list = button.Value },
+                    "script" => new { script = button.Value },
+                    "indent" => new { indent = button.Value },
+                    "direction" => new { direction = button.Value },
+
+                    // Buttons with arrays
+                    "color" => new { color = CustomColors.Count > 0 ? CustomColors.ToArray() : System.Array.Empty<string>() },
+                    "background" => new { background = CustomColors.Count > 0 ? CustomColors.ToArray() : System.Array.Empty<string>() },
+                    "font" => new { font = System.Array.Empty<string>() },
+                    "size" => new { size = new object[] { "small", false, "large", "huge" } },
+                    "align" => new { align = System.Array.Empty<string>() },
+
+                    _ => button.Type
+                };
+
+                groupArray.Add(buttonConfig);
+            }
+
+            if (groupArray.Count > 0)
             {
-                new { indent = "-1" },
-                new { indent = "+1" }
-            });
+                toolbarGroups.Add(groupArray);
+            }
         }
 
-        // Advanced group - Direction
-        if (Advanced.HasFlag(AdvancedButtons.Direction))
-        {
-            toolbarGroups.Add(new List<object> { new { direction = "rtl" } });
-        }
-
-        // Clean button (always in its own group)
-        if (Advanced.HasFlag(AdvancedButtons.Clean))
-        {
-            toolbarGroups.Add(new List<string> { "clean" });
-        }
-
-        // Serialize to JSON
-        return JsonSerializer.Serialize(toolbarGroups, new JsonSerializerOptions
-        {
-            WriteIndented = false
-        });
+        return JsonSerializer.Serialize(toolbarGroups, new JsonSerializerOptions { WriteIndented = false });
     }
 
     /// <summary>
-    /// Creates a default "Standard" toolbar configuration
+    /// Creates a standard toolbar configuration.
     /// </summary>
     public static QuillToolbarConfig CreateStandard()
     {
         return new QuillToolbarConfig
         {
-            Formatting = FormattingButtons.Bold | FormattingButtons.Italic,
-            Blocks = BlockButtons.Blockquote | BlockButtons.Header1 | BlockButtons.Header2,
-            Lists = ListButtons.Ordered | ListButtons.Bullet,
-            Media = MediaButtons.Link,
-            Advanced = AdvancedButtons.Clean
+            Groups = new List<ToolbarGroup>
+            {
+                new("Formatting", 0,
+                    new ToolbarButton("bold", null, 0),
+                    new ToolbarButton("italic", null, 1)
+                ),
+                new("Blocks", 1,
+                    new ToolbarButton("blockquote", null, 0),
+                    new ToolbarButton("header", "1", 1),
+                    new ToolbarButton("header", "2", 2)
+                ),
+                new("Lists", 2,
+                    new ToolbarButton("list", "ordered", 0),
+                    new ToolbarButton("list", "bullet", 1)
+                ),
+                new("Media", 3,
+                    new ToolbarButton("link", null, 0)
+                ),
+                new("Advanced", 4,
+                    new ToolbarButton("clean", null, 0)
+                )
+            }
         };
     }
 
     /// <summary>
-    /// Creates a minimal toolbar configuration
+    /// Creates a minimal toolbar configuration.
     /// </summary>
     public static QuillToolbarConfig CreateMinimal()
     {
         return new QuillToolbarConfig
         {
-            Formatting = FormattingButtons.Bold | FormattingButtons.Italic,
-            Advanced = AdvancedButtons.Clean
+            Groups = new List<ToolbarGroup>
+            {
+                new("Formatting", 0,
+                    new ToolbarButton("bold", null, 0),
+                    new ToolbarButton("italic", null, 1)
+                ),
+                new("Advanced", 1,
+                    new ToolbarButton("clean", null, 0)
+                )
+            }
         };
     }
 
     /// <summary>
-    /// Creates a full-featured toolbar configuration
+    /// Creates a full-featured toolbar configuration.
     /// </summary>
     public static QuillToolbarConfig CreateFull()
     {
         return new QuillToolbarConfig
         {
-            Formatting = FormattingButtons.Bold | FormattingButtons.Italic |
-                        FormattingButtons.Underline | FormattingButtons.Strike,
-            Blocks = BlockButtons.Blockquote | BlockButtons.CodeBlock |
-                    BlockButtons.Header1 | BlockButtons.Header2,
-            Lists = ListButtons.Ordered | ListButtons.Bullet | ListButtons.Check,
-            Media = MediaButtons.Link | MediaButtons.Image | MediaButtons.Video,
-            Styles = StyleButtons.Color | StyleButtons.Background | StyleButtons.Align,
-            Advanced = AdvancedButtons.Script | AdvancedButtons.Indent | AdvancedButtons.Clean
+            Groups = new List<ToolbarGroup>
+            {
+                new("Formatting", 0,
+                    new ToolbarButton("bold", null, 0),
+                    new ToolbarButton("italic", null, 1),
+                    new ToolbarButton("underline", null, 2),
+                    new ToolbarButton("strike", null, 3)
+                ),
+                new("Blocks", 1,
+                    new ToolbarButton("blockquote", null, 0),
+                    new ToolbarButton("code-block", null, 1)
+                ),
+                new("Headers", 2,
+                    new ToolbarButton("header", "1", 0),
+                    new ToolbarButton("header", "2", 1)
+                ),
+                new("Lists", 3,
+                    new ToolbarButton("list", "ordered", 0),
+                    new ToolbarButton("list", "bullet", 1),
+                    new ToolbarButton("list", "check", 2)
+                ),
+                new("Media", 4,
+                    new ToolbarButton("link", null, 0),
+                    new ToolbarButton("image", null, 1),
+                    new ToolbarButton("video", null, 2)
+                ),
+                new("Styles", 5,
+                    new ToolbarButton("color", null, 0),
+                    new ToolbarButton("background", null, 1),
+                    new ToolbarButton("align", null, 2)
+                ),
+                new("Advanced", 6,
+                    new ToolbarButton("script", "sub", 0),
+                    new ToolbarButton("script", "super", 1),
+                    new ToolbarButton("indent", "-1", 2),
+                    new ToolbarButton("indent", "+1", 3),
+                    new ToolbarButton("clean", null, 4)
+                )
+            }
         };
     }
 }
