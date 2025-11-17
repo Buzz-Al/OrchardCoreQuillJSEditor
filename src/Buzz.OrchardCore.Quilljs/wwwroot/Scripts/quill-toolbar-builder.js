@@ -28,7 +28,6 @@
         initializePresetButtons();
         initializeButtonSearch();
 
-        console.log('Quill Toolbar Builder initialized successfully');
     });
 
     /**
@@ -45,7 +44,6 @@
             const match = name.match(/^(.+)\.Groups\[/);
             if (match) {
                 state.prefix = match[1] + '.';
-                console.log('Detected prefix:', state.prefix);
             }
         }
 
@@ -74,8 +72,6 @@
             return match ? Math.max(max, parseInt(match[1])) : max;
         }, 0);
         state.nextGroupId = maxId + 1;
-
-        console.log('State initialized:', state);
     }
 
     /**
@@ -156,7 +152,6 @@
             },
             onUpdate: function () {
                 // Called when item is reordered within the same list
-                console.log('Button reordered within group');
                 syncStateToDOM();
             },
             onEnd: function () {
@@ -201,7 +196,6 @@
         // Get button metadata from palette
         const paletteItem = document.querySelector(`.button-palette-item[data-button-type="${buttonType}"]`);
         if (!paletteItem) {
-            console.error('Button type not found in palette:', buttonType);
             return null;
         }
 
@@ -424,30 +418,6 @@
             // Update button count
             updateGroupButtonCount(groupEl);
         });
-
-        // Debug: Log all form inputs
-        console.log('State synced to DOM');
-        console.log('=== Form Inputs Debug ===');
-        groups.forEach((groupEl, groupIndex) => {
-            console.log(`Group ${groupIndex}:`);
-            const hiddenInputs = groupEl.querySelectorAll('input[type="hidden"]');
-            hiddenInputs.forEach(input => {
-                console.log(`  ${input.name} = ${input.value}`);
-            });
-            const nameInput = groupEl.querySelector('.group-name-input');
-            if (nameInput) {
-                console.log(`  ${nameInput.name} = ${nameInput.value}`);
-            }
-            const buttons = groupEl.querySelectorAll('.button-chip');
-            buttons.forEach((btn, btnIdx) => {
-                console.log(`  Button ${btnIdx}:`);
-                const btnInputs = btn.querySelectorAll('input[type="hidden"]');
-                btnInputs.forEach(input => {
-                    console.log(`    ${input.name} = ${input.value}`);
-                });
-            });
-        });
-        console.log('=========================');
     }
 
     /**
@@ -593,7 +563,6 @@
 
         const preset = presets[presetName];
         if (!preset) {
-            console.error('Unknown preset:', presetName);
             return;
         }
 
@@ -652,8 +621,6 @@
         // Update UI
         updateButtonUsageIndicators();
         syncStateToDOM();
-
-        console.log(`Loaded ${presetName} preset`);
     }
 
     /**
