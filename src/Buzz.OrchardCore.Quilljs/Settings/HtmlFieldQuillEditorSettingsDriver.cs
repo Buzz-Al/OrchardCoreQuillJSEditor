@@ -25,10 +25,16 @@ public class HtmlFieldQuillEditorSettingsDriver : ContentPartFieldDefinitionDisp
         {
             var settings = partFieldDefinition.GetSettings<HtmlFieldQuillEditorSettings>();
 
-            // TODO Phase 3: Populate ViewModel from settings.ToolbarConfig.Groups
-            // For now, just load basic settings
-            model.Theme = settings.Theme;
-            model.CustomColors = settings.ToolbarConfig?.CustomColors ?? new();
+            // Populate ViewModel from settings using factory method
+            var viewModel = QuillSettingsViewModel.FromToolbarConfig(
+                settings.ToolbarConfig,
+                settings.Theme
+            );
+
+            // Copy properties to model (required by OrchardCore's Initialize pattern)
+            model.Theme = viewModel.Theme;
+            model.CustomColors = viewModel.CustomColors;
+            model.Groups = viewModel.Groups;
         })
         .Location("Editor");
     }
