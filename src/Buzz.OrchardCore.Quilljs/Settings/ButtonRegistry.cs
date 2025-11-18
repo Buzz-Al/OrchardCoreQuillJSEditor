@@ -34,8 +34,8 @@ public static class ButtonRegistry
         // Style buttons
         ["color"] = new("color", "Text Color", "A", "Styles", false),
         ["background"] = new("background", "Background Color", "■", "Styles", false),
-        ["font"] = new("font", "Font Family", "Font", "Styles", false),
-        ["size"] = new("size", "Font Size", "Size", "Styles", false),
+        ["font"] = new("font", "Font Family", "Aa", "Styles", false),
+        ["size"] = new("size", "Font Size", "T↕", "Styles", false),
         ["align"] = new("align", "Alignment", "≡", "Styles", false),
 
         // Advanced buttons

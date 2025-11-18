@@ -34,7 +34,6 @@ namespace Buzz.OrchardCore.Quilljs
         .SetUrl("~/Buzz.OrchardCore.Quilljs/Styles/quill-toolbar-builder.css")
         .SetVersion("1.0.0");
 
-      // SortableJS for drag-and-drop functionality
       _manifest
         .DefineScript("sortablejs")
         .SetUrl("~/Buzz.OrchardCore.Quilljs/Scripts/sortable.min.js", "~/Buzz.OrchardCore.Quilljs/Scripts/sortable.js")
@@ -42,7 +41,6 @@ namespace Buzz.OrchardCore.Quilljs
         .SetCdnIntegrity("sha384-iU5/4BKXa1kD6gGCmZT5b7TxLXzVgQPKOvQdOb0/C1sVhqZMPcKKJKNwPVbKQiPK", "sha384-iU5/4BKXa1kD6gGCmZT5b7TxLXzVgQPKOvQdOb0/C1sVhqZMPcKKJKNwPVbKQiPK")
         .SetVersion("1.15.0");
 
-      // Custom toolbar builder JavaScript
       _manifest
         .DefineScript("quill-toolbar-builder")
         .SetUrl("~/Buzz.OrchardCore.Quilljs/Scripts/quill-toolbar-builder.js")
