@@ -76,6 +76,47 @@
 
     if(quillEditor)
     {
+        // Override Quill's alignment to use Bootstrap 5 classes
+        const Parchment = Quill.import('parchment');
+
+        // Create custom align attributor that maps Quill values to Bootstrap 5 classes
+        class BootstrapAlignAttributor extends Parchment.ClassAttributor {
+          add(node, value) {
+            // Map Quill's align values to Bootstrap 5 class names
+            const valueMap = {
+              'left': 'start',
+              'right': 'end',
+              'center': 'center',
+              'justify': 'justify'
+            };
+            const mappedValue = valueMap[value] || value;
+            return super.add(node, mappedValue);
+          }
+
+          value(node) {
+            // Map Bootstrap classes back to Quill values
+            const classMap = {
+              'text-start': 'left',
+              'text-end': 'right',
+              'text-center': 'center',
+              'text-justify': 'justify'
+            };
+            const classList = Array.from(node.classList);
+            for (const className of classList) {
+              if (classMap[className]) {
+                return classMap[className];
+              }
+            }
+            return super.value(node);
+          }
+        }
+
+        const AlignClass = new BootstrapAlignAttributor('align', 'text', {
+          scope: Parchment.Scope.BLOCK,
+          whitelist: ['start', 'center', 'end', 'justify']
+        });
+        Quill.register(AlignClass, true);
+
         // Get toolbar configuration from data attribute (secure, HTML-encoded by Razor)
         const editorElement = document.getElementById('@Html.IdFor(m => m.Html)_editor');
         const toolbarConfigJson = editorElement.getAttribute('data-toolbar-config');
