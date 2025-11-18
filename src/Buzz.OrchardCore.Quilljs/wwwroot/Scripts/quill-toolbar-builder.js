@@ -14,21 +14,41 @@
         prefix: '' // Will be detected from existing form inputs
     };
 
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', function () {
+    /**
+     * Main initialization function
+     */
+    function initialize() {
         const container = document.querySelector('.quill-toolbar-builder');
         if (!container) return;
 
+        // Check if SortableJS is loaded
+        if (typeof Sortable === 'undefined') {
+            console.error('SortableJS library not loaded! Drag and drop functionality will not work.');
+            console.error('Please ensure SortableJS is included before quill-toolbar-builder.js');
+            return;
+        }
+
         console.log('Initializing Quill Toolbar Builder...');
 
-        initializeState();
-        initializePalette();
-        initializeToolbarGroups();
-        initializeColorPalette();
-        initializePresetButtons();
-        initializeButtonSearch();
+        try {
+            initializeState();
+            initializePalette();
+            initializeToolbarGroups();
+            initializeColorPalette();
+            initializePresetButtons();
+            initializeButtonSearch();
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    }
 
-    });
+    // Initialize when DOM is ready (handle race condition)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        // DOM already loaded, initialize immediately
+        initialize();
+    }
 
     /**
      * Initialize state from DOM (existing groups and buttons)
@@ -81,21 +101,25 @@
         const categories = document.querySelectorAll('#button-palette .accordion-body');
 
         categories.forEach(categoryBody => {
-            new Sortable(categoryBody, {
-                group: {
-                    name: 'buttons',
-                    pull: 'clone',
-                    put: false
-                },
-                animation: 150,
-                sort: false,
-                onStart: function (evt) {
-                    evt.item.classList.add('sortable-drag');
-                },
-                onEnd: function (evt) {
-                    evt.item.classList.remove('sortable-drag');
-                }
-            });
+            try {
+                new Sortable(categoryBody, {
+                    group: {
+                        name: 'buttons',
+                        pull: 'clone',
+                        put: false
+                    },
+                    animation: 150,
+                    sort: false,
+                    onStart: function (evt) {
+                        evt.item.classList.add('sortable-drag');
+                    },
+                    onEnd: function (evt) {
+                        evt.item.classList.remove('sortable-drag');
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to initialize palette sortable:', error);
+            }
         });
     }
 
@@ -106,22 +130,27 @@
         const toolbarGroups = document.getElementById('toolbar-groups');
 
         // Make groups themselves sortable
-        new Sortable(toolbarGroups, {
-            animation: 150,
-            handle: '.group-drag-handle',
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            dragClass: 'sortable-drag',
-            onEnd: function () {
-                updateGroupOrder();
-                syncStateToDOM();
-            }
-        });
+        try {
+            new Sortable(toolbarGroups, {
+                animation: 150,
+                handle: '.group-drag-handle',
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: function () {
+                    updateGroupOrder();
+                    syncStateToDOM();
+                }
+            });
+        } catch (error) {
+            console.error('Failed to initialize toolbar groups sortable:', error);
+        }
 
         // Initialize existing groups
         document.querySelectorAll('.toolbar-group').forEach(groupEl => {
             initializeGroupButtons(groupEl);
             attachGroupEventListeners(groupEl);
+            initializeExistingButtonChips(groupEl); // Attach event listeners to server-rendered button chips
         });
 
         // Add Group button
@@ -136,44 +165,67 @@
      */
     function initializeGroupButtons(groupEl) {
         const buttonsContainer = groupEl.querySelector('.group-buttons');
+        if (!buttonsContainer) return;
 
-        new Sortable(buttonsContainer, {
-            group: 'buttons',
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            dragClass: 'sortable-drag',
-            onAdd: function (evt) {
-                handleButtonAdd(evt);
-            },
-            onRemove: function () {
-                updateButtonUsageIndicators();
-                syncStateToDOM();
-            },
-            onUpdate: function () {
-                // Called when item is reordered within the same list
-                syncStateToDOM();
-            },
-            onEnd: function () {
-                syncStateToDOM();
-            }
-        });
+        try {
+            new Sortable(buttonsContainer, {
+                group: 'buttons',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onAdd: function (evt) {
+                    handleButtonAdd(evt);
+                },
+                onRemove: function () {
+                    updateButtonUsageIndicators();
+                    syncStateToDOM();
+                },
+                onUpdate: function () {
+                    // Called when item is reordered within the same list
+                    syncStateToDOM();
+                },
+                onEnd: function () {
+                    syncStateToDOM();
+                }
+            });
+        } catch (error) {
+            console.error('Failed to initialize group buttons sortable:', error);
+        }
     }
 
     /**
-     * Handle button being added to a group from palette
+     * Detect if item came from palette or another group and handle accordingly
      */
     function handleButtonAdd(evt) {
+        // Determine if this is a clone from palette or a move between groups
+        const isFromPalette = evt.from.classList.contains('accordion-body');
+
+        if (isFromPalette) {
+            handleButtonClone(evt);
+        } else {
+            handleButtonMove(evt);
+        }
+    }
+
+    /**
+     * Handle button being cloned from palette to a group
+     */
+    function handleButtonClone(evt) {
         const paletteItem = evt.item;
         const buttonType = paletteItem.dataset.buttonType;
         const groupEl = evt.to.closest('.toolbar-group');
-        const groupIndex = Array.from(document.querySelectorAll('.toolbar-group')).indexOf(groupEl);
 
-        // Remove palette item (we'll create a proper button chip)
+        // Remove palette item clone (we'll create a proper button chip)
         paletteItem.remove();
 
-        // Create button chip
-        const buttonChip = createButtonChip(buttonType, groupIndex);
+        // Create button chip with null check
+        const buttonChip = createButtonChip(buttonType);
+        if (!buttonChip) {
+            console.error(`Failed to create button chip for type: ${buttonType}`);
+            return;
+        }
+
         evt.to.appendChild(buttonChip);
 
         // Remove empty state if present
@@ -187,6 +239,76 @@
 
         // Sync to hidden inputs
         syncStateToDOM();
+    }
+
+    /**
+     * Handle button being moved between groups
+     */
+    function handleButtonMove(evt) {
+        const groupEl = evt.to.closest('.toolbar-group');
+
+        // Item is already a button chip, no need to recreate
+        // Just update the UI state
+
+        // Remove empty state if present
+        evt.to.querySelector('.drop-zone-placeholder')?.remove();
+
+        // Update button count badges for both source and destination
+        updateGroupButtonCount(groupEl);
+        const sourceGroup = evt.from.closest('.toolbar-group');
+        if (sourceGroup) {
+            updateGroupButtonCount(sourceGroup);
+        }
+
+        // Update "in use" indicators
+        updateButtonUsageIndicators();
+
+        // Sync to hidden inputs
+        syncStateToDOM();
+    }
+
+    /**
+     * Attach remove button event listener to a button chip
+     */
+    function attachRemoveButtonListener(chip) {
+        const removeBtn = chip.querySelector('.remove-button-btn');
+        if (!removeBtn) return;
+
+        // Remove existing listener if any (to prevent duplicates)
+        const newRemoveBtn = removeBtn.cloneNode(true);
+        removeBtn.parentNode.replaceChild(newRemoveBtn, removeBtn);
+
+        newRemoveBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            chip.remove();
+
+            const groupEl = chip.closest('.toolbar-group');
+            if (!groupEl) return;
+
+            const buttonsContainer = groupEl.querySelector('.group-buttons');
+
+            // Show empty state if no buttons left
+            if (buttonsContainer.querySelectorAll('.button-chip').length === 0) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'drop-zone-placeholder text-center text-muted py-3 w-100';
+                placeholder.innerHTML = '<i class="fa-solid fa-hand-pointer me-2"></i>Drag buttons here';
+                buttonsContainer.appendChild(placeholder);
+            }
+
+            updateGroupButtonCount(groupEl);
+            updateButtonUsageIndicators();
+            syncStateToDOM();
+        });
+    }
+
+    /**
+     * Initialize event listeners for existing button chips (server-rendered)
+     */
+    function initializeExistingButtonChips(groupEl) {
+        const buttonChips = groupEl.querySelectorAll('.button-chip');
+        buttonChips.forEach(chip => {
+            attachRemoveButtonListener(chip);
+        });
     }
 
     /**
@@ -213,26 +335,8 @@
                     style="font-size: 0.6rem; padding: 0.25rem;"></button>
         `;
 
-        // Add remove button handler
-        chip.querySelector('.remove-button-btn').addEventListener('click', function (e) {
-            e.preventDefault();
-            chip.remove();
-
-            const groupEl = chip.closest('.toolbar-group');
-            const buttonsContainer = groupEl.querySelector('.group-buttons');
-
-            // Show empty state if no buttons left
-            if (buttonsContainer.querySelectorAll('.button-chip').length === 0) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'drop-zone-placeholder text-center text-muted py-3 w-100';
-                placeholder.innerHTML = '<i class="fa-solid fa-hand-pointer me-2"></i>Drag buttons here';
-                buttonsContainer.appendChild(placeholder);
-            }
-
-            updateGroupButtonCount(groupEl);
-            updateButtonUsageIndicators();
-            syncStateToDOM();
-        });
+        // Attach remove button handler
+        attachRemoveButtonListener(chip);
 
         return chip;
     }
