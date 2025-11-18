@@ -590,7 +590,7 @@
 
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
-            hiddenInput.name = `CustomColors[${currentIndex}]`;
+            hiddenInput.name = `${state.prefix}CustomColors[${currentIndex}]`;
             hiddenInput.value = color;
 
             const preview = document.createElement('div');
@@ -619,7 +619,7 @@
             const colorItems = colorList.querySelectorAll('.color-item');
             colorItems.forEach((item, index) => {
                 const input = item.querySelector('input[type="hidden"]');
-                input.name = `CustomColors[${index}]`;
+                input.name = `${state.prefix}CustomColors[${index}]`;
             });
         }
     }
