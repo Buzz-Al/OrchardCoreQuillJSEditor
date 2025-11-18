@@ -280,12 +280,15 @@
 
         newRemoveBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            chip.remove();
 
+            // Get references BEFORE removing the chip from DOM
             const groupEl = chip.closest('.toolbar-group');
             if (!groupEl) return;
 
             const buttonsContainer = groupEl.querySelector('.group-buttons');
+
+            // Remove the chip
+            chip.remove();
 
             // Show empty state if no buttons left
             if (buttonsContainer.querySelectorAll('.button-chip').length === 0) {
