@@ -37,6 +37,9 @@
             initializeColorPalette();
             initializePresetButtons();
             initializeButtonSearch();
+
+            // Update button usage indicators for existing buttons
+            updateButtonUsageIndicators();
         } catch (error) {
             console.error('Error during initialization:', error);
         }
