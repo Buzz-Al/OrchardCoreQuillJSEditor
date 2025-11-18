@@ -7,6 +7,16 @@
   var quillSettings = Model.PartFieldDefinition.GetSettings<HtmlFieldQuillEditorSettings>();
   var culture = await Orchard.GetContentCultureAsync(Model.Field.ContentItem);
 
+  // Initialize with defaults if null (prevents NullReferenceException)
+  if (quillSettings == null || quillSettings.ToolbarConfig == null || quillSettings.ToolbarConfig.Groups == null || quillSettings.ToolbarConfig.Groups.Count == 0)
+  {
+    quillSettings = new HtmlFieldQuillEditorSettings
+    {
+      Theme = QuillTheme.Snow,
+      ToolbarConfig = QuillToolbarConfig.CreateStandard()
+    };
+  }
+
   string theme;
   switch (quillSettings.Theme){
     case QuillTheme.Bubble:

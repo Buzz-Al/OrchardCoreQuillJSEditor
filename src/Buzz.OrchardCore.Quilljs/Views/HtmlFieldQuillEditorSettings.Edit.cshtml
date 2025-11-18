@@ -79,7 +79,7 @@
                                                 @foreach (var button in allButtons[category])
                                                 {
                                                     <div class="button-palette-item p-2 mb-1 rounded d-flex align-items-center"
-                                                         data-button-type="@button.DisplayName.Replace(" ", "")"
+                                                         data-button-type="@button.Type"
                                                          data-button-category="@category"
                                                          title="@button.DisplayName">
                                                         <span class="button-icon me-2 text-center" style="width: 24px; font-weight: bold;">@button.Icon</span>

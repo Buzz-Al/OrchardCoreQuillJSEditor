@@ -11,38 +11,38 @@ public static class ButtonRegistry
     private static readonly Dictionary<string, ButtonMetadata> _buttons = new()
     {
         // Formatting buttons
-        ["bold"] = new("Bold", "B", "Formatting", false),
-        ["italic"] = new("Italic", "I", "Formatting", false),
-        ["underline"] = new("Underline", "U", "Formatting", false),
-        ["strike"] = new("Strikethrough", "S", "Formatting", false),
-        ["code"] = new("Inline Code", "<>", "Formatting", false),
+        ["bold"] = new("bold", "Bold", "B", "Formatting", false),
+        ["italic"] = new("italic", "Italic", "I", "Formatting", false),
+        ["underline"] = new("underline", "Underline", "U", "Formatting", false),
+        ["strike"] = new("strike", "Strikethrough", "S", "Formatting", false),
+        ["code"] = new("code", "Inline Code", "<>", "Formatting", false),
 
         // Block buttons
-        ["blockquote"] = new("Blockquote", "\"", "Blocks", false),
-        ["code-block"] = new("Code Block", "{ }", "Blocks", false),
-        ["header"] = new("Header", "H", "Blocks", true, new[] { "1", "2" }),
+        ["blockquote"] = new("blockquote", "Blockquote", "\"", "Blocks", false),
+        ["code-block"] = new("code-block", "Code Block", "{ }", "Blocks", false),
+        ["header"] = new("header", "Header", "H", "Blocks", true, new[] { "1", "2" }),
 
         // List buttons
-        ["list"] = new("List", "•", "Lists", true, new[] { "ordered", "bullet", "check" }),
+        ["list"] = new("list", "List", "•", "Lists", true, new[] { "ordered", "bullet", "check" }),
 
         // Media buttons
-        ["link"] = new("Link", "🔗", "Media", false),
-        ["image"] = new("Image", "🖼", "Media", false),
-        ["video"] = new("Video", "🎥", "Media", false),
-        ["formula"] = new("Formula", "∑", "Media", false),
+        ["link"] = new("link", "Link", "🔗", "Media", false),
+        ["image"] = new("image", "Image", "🖼", "Media", false),
+        ["video"] = new("video", "Video", "🎥", "Media", false),
+        ["formula"] = new("formula", "Formula", "∑", "Media", false),
 
         // Style buttons
-        ["color"] = new("Text Color", "A", "Styles", false),
-        ["background"] = new("Background Color", "■", "Styles", false),
-        ["font"] = new("Font Family", "Font", "Styles", false),
-        ["size"] = new("Font Size", "Size", "Styles", false),
-        ["align"] = new("Alignment", "≡", "Styles", false),
+        ["color"] = new("color", "Text Color", "A", "Styles", false),
+        ["background"] = new("background", "Background Color", "■", "Styles", false),
+        ["font"] = new("font", "Font Family", "Font", "Styles", false),
+        ["size"] = new("size", "Font Size", "Size", "Styles", false),
+        ["align"] = new("align", "Alignment", "≡", "Styles", false),
 
         // Advanced buttons
-        ["script"] = new("Script", "x²", "Advanced", true, new[] { "sub", "super" }),
-        ["indent"] = new("Indent", "→", "Advanced", true, new[] { "-1", "+1" }),
-        ["direction"] = new("Text Direction", "RTL", "Advanced", true, new[] { "rtl" }),
-        ["clean"] = new("Remove Formatting", "⌧", "Advanced", false)
+        ["script"] = new("script", "Script", "x²", "Advanced", true, new[] { "sub", "super" }),
+        ["indent"] = new("indent", "Indent", "→", "Advanced", true, new[] { "-1", "+1" }),
+        ["direction"] = new("direction", "Text Direction", "RTL", "Advanced", true, new[] { "rtl" }),
+        ["clean"] = new("clean", "Remove Formatting", "⌧", "Advanced", false)
     };
 
     /// <summary>
@@ -52,7 +52,7 @@ public static class ButtonRegistry
     {
         return _buttons.TryGetValue(type, out var metadata)
             ? metadata
-            : new ButtonMetadata(type, "?", "Unknown", false);
+            : new ButtonMetadata(type, type, "?", "Unknown", false);
     }
 
     /// <summary>

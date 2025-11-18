@@ -4,6 +4,7 @@ namespace Buzz.OrchardCore.Quilljs.Settings;
 /// Metadata for a toolbar button type.
 /// </summary>
 public record ButtonMetadata(
+    string Type,
     string DisplayName,
     string Icon,
     string Category,
