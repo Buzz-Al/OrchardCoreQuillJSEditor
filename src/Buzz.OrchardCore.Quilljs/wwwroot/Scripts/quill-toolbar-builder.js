@@ -651,23 +651,23 @@
         // Define presets
         const presets = {
             minimal: [
-                { name: 'Basic', buttons: ['Bold', 'Italic', 'Link'] }
+                { name: 'Basic', buttons: ['bold', 'italic', 'link'] }
             ],
             standard: [
-                { name: 'Formatting', buttons: ['Bold', 'Italic', 'Underline', 'Strike'] },
-                { name: 'Blocks', buttons: ['Blockquote', 'CodeBlock'] },
-                { name: 'Lists', buttons: ['OrderedList', 'BulletList'] },
-                { name: 'Media', buttons: ['Link', 'Image', 'Video'] },
-                { name: 'Advanced', buttons: ['Clean'] }
+                { name: 'Formatting', buttons: ['bold', 'italic', 'underline', 'strike'] },
+                { name: 'Blocks', buttons: ['blockquote', 'code-block'] },
+                { name: 'Lists', buttons: ['list'] },
+                { name: 'Media', buttons: ['link', 'image', 'video'] },
+                { name: 'Advanced', buttons: ['clean'] }
             ],
             full: [
-                { name: 'Text Style', buttons: ['Bold', 'Italic', 'Underline', 'Strike'] },
-                { name: 'Color', buttons: ['Color', 'Background'] },
-                { name: 'Structure', buttons: ['Header', 'Blockquote', 'CodeBlock'] },
-                { name: 'Lists & Align', buttons: ['OrderedList', 'BulletList', 'Align'] },
-                { name: 'Advanced', buttons: ['Script', 'Indent', 'Direction'] },
-                { name: 'Media', buttons: ['Link', 'Image', 'Video', 'Formula'] },
-                { name: 'Utilities', buttons: ['Clean'] }
+                { name: 'Text Style', buttons: ['bold', 'italic', 'underline', 'strike', 'code'] },
+                { name: 'Color', buttons: ['color', 'background'] },
+                { name: 'Structure', buttons: ['header', 'blockquote', 'code-block'] },
+                { name: 'Lists & Align', buttons: ['list', 'align'] },
+                { name: 'Advanced', buttons: ['script', 'indent', 'direction'] },
+                { name: 'Media', buttons: ['link', 'image', 'video', 'formula'] },
+                { name: 'Utilities', buttons: ['clean'] }
             ]
         };
 

@@ -58,6 +58,13 @@
         .form-control.bubble .ql-editor{
             padding: 0;
         }
+        /* Ensure bubble tooltip appears above OrchardCore's side drawer and other UI elements */
+        .ql-bubble .ql-tooltip {
+            z-index: 10000 !important;
+        }
+        .ql-bubble .ql-tooltip-editor {
+            z-index: 10001 !important;
+        }
     </style>
 }
 
@@ -80,7 +87,8 @@
               modules: {
               toolbar: toolbarSettings,
               },
-              theme: '@theme'
+              theme: '@theme',
+              bounds: '#@Html.IdFor(x => x.Html)_FieldWrapper'
           }
         );
 

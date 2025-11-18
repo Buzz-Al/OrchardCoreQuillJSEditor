@@ -100,12 +100,12 @@ public class QuillToolbarConfig
                     or "blockquote" or "code-block" or "link" or "image"
                     or "video" or "formula" or "clean" => button.Type,
 
-                    // Parameterized buttons (object notation)
-                    "header" => new { header = int.Parse(button.Value) },
-                    "list" => new { list = button.Value },
-                    "script" => new { script = button.Value },
-                    "indent" => new { indent = button.Value },
-                    "direction" => new { direction = button.Value },
+                    // Parameterized buttons (object notation) - with null-safe defaults
+                    "header" => new { header = !string.IsNullOrEmpty(button.Value) ? int.Parse(button.Value) : 2 },
+                    "list" => new { list = !string.IsNullOrEmpty(button.Value) ? button.Value : "bullet" },
+                    "script" => new { script = !string.IsNullOrEmpty(button.Value) ? button.Value : "sub" },
+                    "indent" => new { indent = !string.IsNullOrEmpty(button.Value) ? button.Value : "+1" },
+                    "direction" => new { direction = !string.IsNullOrEmpty(button.Value) ? button.Value : "rtl" },
 
                     // Buttons with arrays
                     "color" => new { color = CustomColors.Count > 0 ? CustomColors.ToArray() : System.Array.Empty<string>() },
