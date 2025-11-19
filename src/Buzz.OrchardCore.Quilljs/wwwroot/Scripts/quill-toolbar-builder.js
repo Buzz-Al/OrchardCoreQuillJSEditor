@@ -520,9 +520,17 @@
                 const buttonType = buttonChip.dataset.buttonType;
                 const buttonValue = buttonChip.dataset.buttonValue || '';
 
-                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Type`, buttonType);
-                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Value`, buttonValue);
-                updateOrCreateHiddenInput(buttonChip, `${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Order`, buttonIndex);
+                // Remove ALL existing hidden inputs from this button chip to avoid duplicates
+                buttonChip.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+
+                // Create fresh hidden inputs with correct indices
+                const typeInput = createHiddenInput(`${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Type`, buttonType);
+                const valueInput = createHiddenInput(`${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Value`, buttonValue);
+                const orderInput = createHiddenInput(`${state.prefix}Groups[${groupIndex}].Buttons[${buttonIndex}].Order`, buttonIndex);
+
+                buttonChip.appendChild(typeInput);
+                buttonChip.appendChild(valueInput);
+                buttonChip.appendChild(orderInput);
             });
 
             // Update button count
