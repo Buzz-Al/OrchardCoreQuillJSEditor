@@ -21,12 +21,12 @@ namespace Buzz.OrchardCore.Quilljs
 
       _manifest
         .DefineStyle("quill-bubble")
-        .SetCdn("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.bubble.css")
+        .SetUrl("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.bubble.css")
         .SetVersion("2.0.2");
 
       _manifest
         .DefineStyle("quill-snow")
-        .SetCdn("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.snow.css")
+        .SetUrl("~/Buzz.OrchardCore.Quilljs/quill/dist/quill.snow.css")
         .SetVersion("2.0.2");
 
       _manifest

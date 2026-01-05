@@ -28,8 +28,6 @@
             return;
         }
 
-        console.log('Initializing Quill Toolbar Builder...');
-
         try {
             initializeState();
             initializePalette();

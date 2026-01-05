@@ -101,7 +101,7 @@ public class QuillToolbarConfig
                     or "video" or "formula" or "clean" => button.Type,
 
                     // Parameterized buttons (object notation) - with null-safe defaults
-                    "header" => new { header = !string.IsNullOrEmpty(button.Value) ? int.Parse(button.Value) : 2 },
+                    "header" => new { header = int.TryParse(button.Value, out var headerLevel) ? headerLevel : 2 },
                     "list" => new { list = !string.IsNullOrEmpty(button.Value) ? button.Value : "bullet" },
                     "script" => new { script = !string.IsNullOrEmpty(button.Value) ? button.Value : "sub" },
                     "indent" => new { indent = !string.IsNullOrEmpty(button.Value) ? button.Value : "+1" },

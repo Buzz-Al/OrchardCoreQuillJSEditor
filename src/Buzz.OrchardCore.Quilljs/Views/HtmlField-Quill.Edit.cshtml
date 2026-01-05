@@ -120,7 +120,12 @@
         // Get toolbar configuration from data attribute (secure, HTML-encoded by Razor)
         const editorElement = document.getElementById('@Html.IdFor(m => m.Html)_editor');
         const toolbarConfigJson = editorElement.getAttribute('data-toolbar-config');
-        const toolbarSettings = toolbarConfigJson ? JSON.parse(toolbarConfigJson) : [];
+        let toolbarSettings = [];
+        try {
+            toolbarSettings = toolbarConfigJson ? JSON.parse(toolbarConfigJson) : [];
+        } catch (e) {
+            console.error('Failed to parse toolbar configuration:', e);
+        }
 
         const quill = new Quill(
           '#@Html.IdFor(m => m.Html)_editor',
